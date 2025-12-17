@@ -1581,9 +1581,129 @@
             }
         }
 
-        // Handle auth form submit
-        async function handleAuthFormSubmit(e) {
-            e.preventDefault();
+        // Update saveProject function
+async function saveProject() {
+    if (!state.user) {
+        showNotification('Silakan login terlebih dahulu untuk menyimpan', 'error');
+        showAuthModal();
+        return;
+    }
+    
+    try {
+        const projectData = {
+            panels: Array.from(state.panels.values()),
+            connections: Array.from(state.connections.values()),
+            nextPanelId: state.nextPanelId,
+            nextConnectionId: state.nextConnectionId
+        };
+        
+        // Gunakan function save_project dengan parameter yang benar
+        const { data, error } = await supabase.rpc('save_project', {
+            p_user_id: state.user.id,
+            p_project_name: `Projek ${new Date().toLocaleDateString('id-ID')}`,
+            p_project_data: projectData
+            // Parameter lainnya menggunakan default values
+        });
+        
+        if (error) throw error;
+        
+        if (data && data.success) {
+            showNotification(`Projek berhasil ${data.action === 'updated' ? 'diperbarui' : 'disimpan'}!`, 'success');
+            console.log('Project saved:', data);
+        }
+    } catch (error) {
+        showNotification('Gagal menyimpan projek: ' + error.message, 'error');
+        console.error('Save error:', error);
+    }
+}
+
+// Update loadUserProjects function
+async function loadUserProjects() {
+    if (!state.user) return;
+    
+    try {
+        // Menggunakan function get_user_projects
+        const { data, error } = await supabase.rpc('get_user_projects');
+        
+        if (error) throw error;
+        
+        if (data && data.length > 0) {
+            console.log('Loaded projects:', data);
+            // Pilih project terbaru
+            const latestProject = data[0];
+            await loadProjectById(latestProject.id);
+        }
+    } catch (error) {
+        console.error('Error loading projects:', error);
+    }
+}
+
+// Function untuk load templates
+async function loadTemplates() {
+    try {
+        const { data, error } = await supabase
+            .from('templates')
+            .select('*')
+            .eq('is_public', true)
+            .order('created_at', { ascending: false })
+            .limit(5);
+        
+        if (error) throw error;
+        
+        if (data && data.length > 0) {
+            state.templates = data;
+            console.log('Templates loaded:', data);
+        }
+    } catch (error) {
+        console.error('Error loading templates:', error);
+    }
+}
+
+// Function untuk load project by ID
+async function loadProjectById(projectId) {
+    try {
+        const { data, error } = await supabase.rpc('get_project', {
+            p_project_id: projectId
+        });
+        
+        if (error) throw error;
+        
+        if (data && data.data) {
+            loadProjectData(data.data);
+            showNotification('Projek berhasil dimuat', 'success');
+        }
+    } catch (error) {
+        console.error('Error loading project:', error);
+        showNotification('Gagal memuat projek', 'error');
+    }
+}
+
+// Function untuk load project data ke canvas
+function loadProjectData(projectData) {
+    // Clear current state
+    state.panels.clear();
+    state.connections.clear();
+    canvas.innerHTML = '';
+    
+    // Load panels
+    projectData.panels.forEach(panelData => {
+        state.panels.set(panelData.id, panelData);
+        renderPanel(panelData);
+        createConnectionPoints(panelData);
+    });
+    
+    // Load connections
+    projectData.connections.forEach(connData => {
+        state.connections.set(connData.id, connData);
+        renderConnection(connData);
+    });
+    
+    // Update IDs
+    state.nextPanelId = projectData.nextPanelId || state.panels.size + 1;
+    state.nextConnectionId = projectData.nextConnectionId || state.connections.size + 1;
+    
+    updateCounts();
+}
             
             const email = document.getElementById('authEmail').value;
             const password = document.getElementById('authPassword').value;
