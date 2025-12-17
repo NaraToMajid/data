@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FlowConnect | Visualisasi Panel & Koneksi</title>
+    <title>FlowConnect | Professional Diagram Editor</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -15,29 +15,35 @@
         }
 
         :root {
-            --primary-color: #3e8bff;
-            --secondary-color: #00d4aa;
-            --danger-color: #ff4757;
-            --warning-color: #ffa502;
+            --primary-color: #2563eb;
+            --secondary-color: #059669;
+            --accent-color: #7c3aed;
+            --danger-color: #dc2626;
+            --warning-color: #d97706;
+            --success-color: #059669;
             --dark-bg: #0f172a;
+            --darker-bg: #020617;
             --panel-bg: #1e293b;
-            --panel-border: #334155;
-            --text-primary: #f1f5f9;
-            --text-secondary: #94a3b8;
-            --canvas-bg: #0a0f1c;
-            --node-color-1: #3e8bff;
-            --node-color-2: #00d4aa;
-            --node-color-3: #ff6b81;
-            --node-color-4: #9d4edd;
-            --node-color-5: #ff9e00;
-            --connection-color: #60a5fa;
+            --panel-hover: #334155;
+            --panel-border: #475569;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --canvas-bg: #0f172a;
+            --toolbar-bg: rgba(15, 23, 42, 0.95);
+            --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.4);
+            --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.3);
+            --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.2);
+            --border-radius: 10px;
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         body {
-            background-color: var(--dark-bg);
+            background-color: var(--darker-bg);
             color: var(--text-primary);
             min-height: 100vh;
             overflow: hidden;
+            touch-action: none;
         }
 
         .container {
@@ -49,16 +55,17 @@
 
         /* Header Styles */
         header {
-            background-color: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 0 24px;
-            border-bottom: 1px solid var(--panel-border);
+            background-color: var(--toolbar-bg);
+            backdrop-filter: blur(20px);
+            padding: 0 20px;
+            border-bottom: 1px solid rgba(71, 85, 105, 0.3);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            height: 64px;
+            height: 60px;
             z-index: 100;
             position: relative;
+            flex-shrink: 0;
         }
 
         .logo {
@@ -68,9 +75,9 @@
         }
 
         .logo-icon {
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
             border-radius: 8px;
             display: flex;
             align-items: center;
@@ -79,97 +86,281 @@
 
         .logo-icon i {
             color: white;
-            font-size: 16px;
+            font-size: 18px;
         }
 
         .logo-text {
             font-size: 20px;
             font-weight: 700;
-            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            background: linear-gradient(to right, var(--primary-color), var(--accent-color));
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
+            letter-spacing: -0.5px;
         }
 
-        .nav-center {
+        .document-info {
             display: flex;
-            gap: 24px;
             align-items: center;
-        }
-
-        .nav-info {
-            display: flex;
-            gap: 16px;
-            font-size: 14px;
+            gap: 20px;
+            font-size: 13px;
             color: var(--text-secondary);
         }
 
-        .nav-info-item {
+        .document-name {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background-color: rgba(30, 41, 59, 0.5);
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid rgba(71, 85, 105, 0.3);
+        }
+
+        .document-stats {
+            display: flex;
+            gap: 12px;
+        }
+
+        .stat-item {
             display: flex;
             align-items: center;
             gap: 6px;
-            padding: 6px 12px;
-            background-color: rgba(30, 41, 59, 0.5);
-            border-radius: 6px;
+            padding: 4px 8px;
+            background-color: rgba(30, 41, 59, 0.3);
+            border-radius: 4px;
         }
 
-        .nav-info-item i {
+        .stat-item i {
             font-size: 12px;
+            color: var(--primary-color);
         }
 
-        .nav-actions {
+        .header-actions {
             display: flex;
-            gap: 12px;
+            gap: 10px;
             align-items: center;
         }
 
         .btn {
-            padding: 10px 20px;
+            padding: 8px 16px;
             border-radius: 8px;
             border: none;
-            font-weight: 600;
-            font-size: 14px;
+            font-weight: 500;
+            font-size: 13px;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: var(--transition);
             display: flex;
             align-items: center;
             gap: 8px;
+            height: 36px;
+            background-color: var(--panel-bg);
+            color: var(--text-primary);
+            border: 1px solid var(--panel-border);
+        }
+
+        .btn:hover {
+            background-color: var(--panel-hover);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
         }
 
         .btn-primary {
             background-color: var(--primary-color);
             color: white;
+            border-color: var(--primary-color);
         }
 
         .btn-primary:hover {
-            background-color: #2d7aff;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(62, 139, 255, 0.3);
+            background-color: #1d4ed8;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
         }
 
-        .btn-secondary {
-            background-color: rgba(30, 41, 59, 0.8);
-            color: var(--text-primary);
-            border: 1px solid var(--panel-border);
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+            border-color: var(--success-color);
         }
 
-        .btn-secondary:hover {
-            background-color: rgba(51, 65, 85, 0.8);
-            transform: translateY(-2px);
+        .btn-success:hover {
+            background-color: #047857;
         }
 
         .btn-danger {
             background-color: var(--danger-color);
             color: white;
+            border-color: var(--danger-color);
         }
 
         .btn-danger:hover {
-            background-color: #ff3742;
-            transform: translateY(-2px);
+            background-color: #b91c1c;
+        }
+
+        .btn-icon {
+            width: 36px;
+            padding: 8px;
+            justify-content: center;
         }
 
         /* Main Content */
         main {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background-color: var(--toolbar-bg);
+            border-right: 1px solid rgba(71, 85, 105, 0.3);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            overflow-y: auto;
+            flex-shrink: 0;
+            backdrop-filter: blur(10px);
+        }
+
+        .sidebar-section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .section-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title i {
+            font-size: 14px;
+        }
+
+        .panel-types {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .panel-type {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 8px;
+            padding: 12px;
+            cursor: grab;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            text-align: center;
+        }
+
+        .panel-type:hover {
+            background-color: var(--panel-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .panel-type-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .panel-type-name {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .color-picker {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        .color-option {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 2px solid transparent;
+        }
+
+        .color-option:hover {
+            transform: scale(1.1);
+        }
+
+        .color-option.active {
+            border-color: white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .tool-btn {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 8px;
+            padding: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tool-btn:hover {
+            background-color: var(--panel-hover);
+            transform: translateY(-1px);
+        }
+
+        .tool-btn.active {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .tool-icon {
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+
+        .tool-btn.active .tool-icon {
+            color: white;
+        }
+
+        .tool-name {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .tool-btn.active .tool-name {
+            color: white;
+        }
+
+        /* Canvas Area */
+        .canvas-container {
             flex: 1;
             position: relative;
             overflow: hidden;
@@ -179,9 +370,14 @@
             width: 100%;
             height: 100%;
             position: relative;
-            cursor: grab;
+            cursor: default;
             background-color: var(--canvas-bg);
             transform-origin: 0 0;
+            transition: transform 0.1s ease-out;
+            background-image: 
+                linear-gradient(rgba(30, 41, 59, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(30, 41, 59, 0.1) 1px, transparent 1px);
+            background-size: 40px 40px;
         }
 
         /* Panel Styles */
@@ -189,75 +385,87 @@
             position: absolute;
             background-color: var(--panel-bg);
             border: 1px solid var(--panel-border);
-            border-radius: 12px;
-            min-width: 280px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border-radius: var(--border-radius);
+            min-width: 240px;
+            max-width: 400px;
+            box-shadow: var(--shadow-md);
             cursor: move;
             user-select: none;
-            transition: box-shadow 0.2s, transform 0.2s;
-            resize: both;
+            transition: var(--transition);
             overflow: hidden;
-            min-height: 180px;
+            min-height: 160px;
+            resize: both;
+            outline: 2px solid transparent;
         }
 
         .panel:hover {
-            box-shadow: 0 12px 48px rgba(62, 139, 255, 0.15);
             border-color: var(--primary-color);
+            box-shadow: var(--shadow-lg);
         }
 
         .panel.dragging {
-            opacity: 0.9;
-            transform: scale(1.02);
+            opacity: 0.95;
+            transform: scale(1.02) rotate(0.5deg);
             z-index: 1000 !important;
+            box-shadow: var(--shadow-lg);
         }
 
         .panel.selected {
-            box-shadow: 0 0 0 2px var(--primary-color), 0 12px 48px rgba(62, 139, 255, 0.2);
-            border-color: var(--primary-color);
+            outline: 2px solid var(--primary-color);
+            box-shadow: 
+                0 0 0 4px rgba(37, 99, 235, 0.1),
+                var(--shadow-lg);
         }
 
         .panel-header {
-            background-color: rgba(30, 41, 59, 0.9);
-            padding: 16px 20px;
+            background-color: rgba(30, 41, 59, 0.95);
+            padding: 14px 16px;
             border-bottom: 1px solid var(--panel-border);
-            border-radius: 12px 12px 0 0;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
             display: flex;
             justify-content: space-between;
             align-items: center;
             cursor: grab;
+            user-select: none;
         }
 
         .panel-title {
             font-weight: 600;
-            font-size: 16px;
+            font-size: 15px;
             display: flex;
             align-items: center;
             gap: 10px;
             color: var(--text-primary);
         }
 
-        .panel-color {
-            width: 12px;
-            height: 12px;
+        .panel-color-indicator {
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
             display: inline-block;
         }
 
         .panel-actions {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             align-items: center;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .panel:hover .panel-actions {
+            opacity: 1;
         }
 
         .panel-action-btn {
             background: none;
             border: none;
             color: var(--text-secondary);
-            font-size: 14px;
+            font-size: 13px;
             cursor: pointer;
-            padding: 4px 8px;
+            padding: 4px 6px;
             border-radius: 4px;
-            transition: all 0.2s;
+            transition: var(--transition);
         }
 
         .panel-action-btn:hover {
@@ -266,15 +474,15 @@
         }
 
         .panel-content {
-            padding: 20px;
-            height: calc(100% - 60px);
+            padding: 16px;
+            height: calc(100% - 52px);
             overflow-y: auto;
         }
 
         .panel-field {
             margin-bottom: 12px;
             padding-bottom: 12px;
-            border-bottom: 1px solid rgba(51, 65, 85, 0.5);
+            border-bottom: 1px solid rgba(71, 85, 105, 0.3);
         }
 
         .panel-field:last-child {
@@ -284,43 +492,57 @@
         }
 
         .field-name {
-            font-size: 14px;
+            font-size: 12px;
             color: var(--text-secondary);
             margin-bottom: 4px;
             display: flex;
             justify-content: space-between;
+            align-items: center;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .field-value {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--text-primary);
-            font-family: 'Monaco', 'Courier New', monospace;
+            font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
+            word-break: break-word;
         }
 
         /* Connection Points */
         .connection-point {
             position: absolute;
-            width: 16px;
-            height: 16px;
+            width: 18px;
+            height: 18px;
             border-radius: 50%;
-            background-color: var(--connection-color);
-            border: 2px solid var(--panel-bg);
+            background-color: white;
+            border: 3px solid var(--panel-border);
             cursor: crosshair;
             z-index: 10;
-            transition: all 0.2s;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+            pointer-events: all;
         }
 
         .connection-point:hover {
             transform: scale(1.3);
-            box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.3);
+            border-color: var(--primary-color);
+            box-shadow: 
+                0 0 0 4px rgba(37, 99, 235, 0.2),
+                var(--shadow-sm);
         }
 
-        .connection-point.source {
+        .connection-point.connecting {
             background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+            animation: pulse 1.5s infinite;
         }
 
-        .connection-point.connected {
-            background-color: var(--warning-color);
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(5, 150, 105, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(5, 150, 105, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(5, 150, 105, 0); }
         }
 
         /* Connection Lines */
@@ -331,28 +553,31 @@
         }
 
         .connection-line {
-            stroke: var(--connection-color);
-            stroke-width: 2;
+            stroke: var(--primary-color);
+            stroke-width: 3;
             fill: none;
             filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
         }
 
-        .connection-line.source {
+        .connection-line:hover {
+            stroke-width: 4;
+        }
+
+        .temp-connection {
             stroke: var(--secondary-color);
+            stroke-width: 3;
+            stroke-dasharray: 5, 5;
+            fill: none;
         }
 
-        .connection-line.connected {
-            stroke: var(--warning-color);
-        }
-
-        /* Controls */
-        .controls {
+        /* Canvas Controls */
+        .canvas-controls {
             position: absolute;
-            bottom: 24px;
-            right: 24px;
+            bottom: 20px;
+            right: 20px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
             z-index: 50;
         }
 
@@ -360,41 +585,51 @@
             display: flex;
             flex-direction: column;
             gap: 8px;
-            background-color: rgba(15, 23, 42, 0.9);
+            background-color: var(--toolbar-bg);
             backdrop-filter: blur(10px);
-            border: 1px solid var(--panel-border);
-            border-radius: 12px;
-            padding: 16px;
+            border: 1px solid rgba(71, 85, 105, 0.3);
+            border-radius: var(--border-radius);
+            padding: 12px;
+            box-shadow: var(--shadow-md);
         }
 
         .control-btn {
-            width: 44px;
-            height: 44px;
+            width: 40px;
+            height: 40px;
             border-radius: 8px;
-            background-color: rgba(30, 41, 59, 0.8);
+            background-color: var(--panel-bg);
             border: 1px solid var(--panel-border);
             color: var(--text-primary);
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s;
+            transition: var(--transition);
+            font-size: 16px;
         }
 
         .control-btn:hover {
-            background-color: var(--primary-color);
+            background-color: var(--panel-hover);
             transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .control-btn.active {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
         }
 
         .zoom-display {
             text-align: center;
-            font-size: 14px;
+            font-size: 12px;
             color: var(--text-secondary);
-            margin-top: 8px;
+            padding: 8px 0;
+            font-weight: 500;
         }
 
-        /* Auth Modal */
-        .modal {
+        /* Modals */
+        .modal-overlay {
             display: none;
             position: fixed;
             top: 0;
@@ -405,48 +640,87 @@
             z-index: 1000;
             justify-content: center;
             align-items: center;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(4px);
+            padding: 20px;
         }
 
-        .modal.active {
+        .modal-overlay.active {
             display: flex;
         }
 
-        .modal-content {
+        .modal {
             background-color: var(--panel-bg);
-            padding: 32px;
-            border-radius: 16px;
-            width: 90%;
-            max-width: 440px;
+            border-radius: var(--border-radius);
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
             border: 1px solid var(--panel-border);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .modal-header {
-            text-align: center;
-            margin-bottom: 32px;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--panel-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .modal-header h2 {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 8px;
-            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
         }
 
-        .modal-header p {
+        .modal-close {
+            background: none;
+            border: none;
             color: var(--text-secondary);
-            font-size: 14px;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-body {
+            padding: 24px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .modal-footer {
+            padding: 20px 24px;
+            border-top: 1px solid var(--panel-border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            background-color: rgba(30, 41, 59, 0.5);
         }
 
         .form-group {
             margin-bottom: 20px;
         }
 
-        .form-group label {
+        .form-label {
             display: block;
             margin-bottom: 8px;
             color: var(--text-primary);
@@ -454,149 +728,167 @@
             font-weight: 500;
         }
 
-        .form-group input {
+        .form-input {
             width: 100%;
             padding: 12px 16px;
-            background-color: rgba(15, 23, 42, 0.8);
+            background-color: rgba(15, 23, 42, 0.5);
             border: 1px solid var(--panel-border);
             border-radius: 8px;
             color: var(--text-primary);
             font-size: 14px;
-            transition: border-color 0.2s;
+            transition: var(--transition);
         }
 
-        .form-group input:focus {
+        .form-input:focus {
             outline: none;
             border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
 
-        .form-actions {
-            display: flex;
+        .form-textarea {
+            width: 100%;
+            padding: 12px 16px;
+            background-color: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--panel-border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+            resize: vertical;
+            min-height: 100px;
+            transition: var(--transition);
+            font-family: inherit;
+        }
+
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        /* File Actions */
+        .file-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
             gap: 12px;
             margin-top: 24px;
         }
 
-        .form-toggle {
+        .file-action {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 8px;
+            padding: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
             text-align: center;
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid var(--panel-border);
+        }
+
+        .file-action:hover {
+            background-color: var(--panel-hover);
+            transform: translateY(-2px);
+            border-color: var(--primary-color);
+        }
+
+        .file-action-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+        }
+
+        .file-action-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .file-action-desc {
+            font-size: 13px;
             color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 16px 20px;
+            background-color: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateX(120%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            max-width: 400px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            border-left-color: var(--success-color);
+        }
+
+        .notification.error {
+            border-left-color: var(--danger-color);
+        }
+
+        .notification.warning {
+            border-left-color: var(--warning-color);
+        }
+
+        .notification-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
             font-size: 14px;
         }
 
-        .form-toggle a {
-            color: var(--primary-color);
-            text-decoration: none;
-            font-weight: 600;
-            cursor: pointer;
+        .notification.success .notification-icon {
+            background-color: rgba(5, 150, 105, 0.2);
+            color: var(--success-color);
         }
 
-        .form-toggle a:hover {
-            text-decoration: underline;
+        .notification.error .notification-icon {
+            background-color: rgba(220, 38, 38, 0.2);
+            color: var(--danger-color);
         }
 
-        /* Instructions */
-        .instructions {
-            position: absolute;
-            top: 80px;
-            left: 24px;
-            background-color: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--panel-border);
-            border-radius: 12px;
-            padding: 20px;
-            max-width: 300px;
-            z-index: 50;
-            transition: transform 0.3s ease;
+        .notification-content {
+            flex: 1;
         }
 
-        .instructions.collapsed {
-            transform: translateX(-320px);
-        }
-
-        .instructions-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-
-        .instructions-header h3 {
-            font-size: 16px;
+        .notification-title {
+            font-size: 14px;
             font-weight: 600;
             color: var(--text-primary);
+            margin-bottom: 4px;
         }
 
-        .toggle-instructions {
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            cursor: pointer;
-            padding: 4px;
-            border-radius: 4px;
-        }
-
-        .toggle-instructions:hover {
-            color: var(--text-primary);
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .instructions-list {
+        .notification-message {
             font-size: 13px;
-            line-height: 1.6;
             color: var(--text-secondary);
-        }
-
-        .instructions-list li {
-            margin-bottom: 10px;
-            padding-left: 20px;
-            position: relative;
-        }
-
-        .instructions-list li:before {
-            content: "•";
-            color: var(--primary-color);
-            position: absolute;
-            left: 0;
-        }
-
-        .instructions-list kbd {
-            background-color: rgba(30, 41, 59, 0.8);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: monospace;
-            font-size: 12px;
-            border: 1px solid var(--panel-border);
-        }
-
-        /* Loading Overlay */
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(15, 23, 42, 0.95);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-            gap: 20px;
-        }
-
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 3px solid rgba(62, 139, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: var(--primary-color);
-            animation: spin 1s ease-in-out infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+            line-height: 1.5;
         }
 
         /* Context Menu */
@@ -604,12 +896,13 @@
             position: fixed;
             background-color: var(--panel-bg);
             border: 1px solid var(--panel-border);
-            border-radius: 8px;
+            border-radius: var(--border-radius);
             padding: 8px;
             z-index: 1000;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
-            min-width: 180px;
+            box-shadow: var(--shadow-lg);
+            min-width: 200px;
             display: none;
+            backdrop-filter: blur(10px);
         }
 
         .context-menu.active {
@@ -625,280 +918,560 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            transition: background-color 0.2s;
+            transition: var(--transition);
         }
 
         .context-menu-item:hover {
-            background-color: rgba(62, 139, 255, 0.1);
+            background-color: rgba(37, 99, 235, 0.1);
+            color: var(--primary-color);
         }
 
         .context-menu-item i {
             width: 16px;
             text-align: center;
+            font-size: 14px;
         }
 
-        /* Notification */
-        .notification {
+        .context-menu-divider {
+            height: 1px;
+            background-color: var(--panel-border);
+            margin: 6px 0;
+        }
+
+        /* Portrait Mode Optimization */
+        @media (max-width: 768px) {
+            header {
+                padding: 0 16px;
+                height: 56px;
+            }
+
+            .logo-text {
+                font-size: 18px;
+            }
+
+            .document-info {
+                display: none;
+            }
+
+            .btn {
+                padding: 6px 12px;
+                font-size: 12px;
+                height: 32px;
+            }
+
+            .btn-icon {
+                width: 32px;
+            }
+
+            .sidebar {
+                width: 250px;
+                padding: 16px;
+            }
+
+            .panel-types {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .tools-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .panel {
+                min-width: 200px;
+                min-height: 140px;
+            }
+
+            .modal {
+                max-width: 90%;
+            }
+
+            .file-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .sidebar {
+                position: fixed;
+                left: -280px;
+                top: 56px;
+                height: calc(100vh - 56px);
+                z-index: 90;
+                transition: left 0.3s ease;
+            }
+
+            .sidebar.active {
+                left: 0;
+            }
+
+            .mobile-toggle {
+                display: block !important;
+            }
+
+            .panel {
+                min-width: 180px;
+                min-height: 120px;
+            }
+
+            .control-group {
+                padding: 8px;
+            }
+
+            .control-btn {
+                width: 36px;
+                height: 36px;
+            }
+        }
+
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 6px;
+            transition: var(--transition);
+        }
+
+        .mobile-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Selection Box */
+        .selection-box {
+            position: absolute;
+            border: 2px solid var(--primary-color);
+            background-color: rgba(37, 99, 235, 0.1);
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        /* Status Bar */
+        .status-bar {
             position: fixed;
-            top: 80px;
-            right: 24px;
-            padding: 16px 20px;
-            background-color: var(--panel-bg);
-            border: 1px solid var(--panel-border);
-            border-radius: 8px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
-            z-index: 1000;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--toolbar-bg);
+            border-top: 1px solid rgba(71, 85, 105, 0.3);
+            padding: 8px 20px;
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 12px;
-            transform: translateX(120%);
-            transition: transform 0.3s ease;
-        }
-
-        .notification.show {
-            transform: translateX(0);
-        }
-
-        .notification-icon {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .notification.success {
-            border-left: 4px solid var(--secondary-color);
-        }
-
-        .notification.success .notification-icon {
-            background-color: rgba(0, 212, 170, 0.2);
-            color: var(--secondary-color);
-        }
-
-        .notification.error {
-            border-left: 4px solid var(--danger-color);
-        }
-
-        .notification.error .notification-icon {
-            background-color: rgba(255, 71, 87, 0.2);
-            color: var(--danger-color);
-        }
-
-        /* User Info */
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .user-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .user-details {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .user-name {
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        .user-email {
             font-size: 12px;
             color: var(--text-secondary);
+            z-index: 40;
+            backdrop-filter: blur(10px);
+        }
+
+        .status-left, .status-right {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Loading Overlay -->
-        <div class="loading-overlay" id="loadingOverlay">
-            <div class="spinner"></div>
-            <p>Memuat aplikasi...</p>
-        </div>
-
         <!-- Header -->
         <header>
             <div class="logo">
+                <button class="mobile-toggle" id="mobileToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
                 <div class="logo-icon">
                     <i class="fas fa-project-diagram"></i>
                 </div>
                 <div class="logo-text">FlowConnect</div>
             </div>
 
-            <div class="nav-center">
-                <div class="nav-info">
-                    <div class="nav-info-item">
+            <div class="document-info">
+                <div class="document-name">
+                    <i class="fas fa-file-alt"></i>
+                    <span id="currentDocument">Diagram-1</span>
+                </div>
+                <div class="document-stats">
+                    <div class="stat-item">
                         <i class="fas fa-square"></i>
-                        <span id="panelCount">0</span> Panel
+                        <span id="panelCount">0</span>
                     </div>
-                    <div class="nav-info-item">
+                    <div class="stat-item">
                         <i class="fas fa-link"></i>
-                        <span id="connectionCount">0</span> Koneksi
+                        <span id="connectionCount">0</span>
                     </div>
-                    <div class="nav-info-item">
+                    <div class="stat-item">
                         <i class="fas fa-search"></i>
-                        <span id="zoomLevel">100%</span> Zoom
+                        <span id="zoomLevel">100%</span>
                     </div>
                 </div>
             </div>
 
-            <div class="nav-actions">
-                <div class="user-info" id="userInfo" style="display: none;">
-                    <div class="user-avatar" id="userAvatar">U</div>
-                    <div class="user-details">
-                        <div class="user-name" id="userName">User</div>
-                        <div class="user-email" id="userEmail">user@example.com</div>
-                    </div>
-                </div>
-                <button class="btn btn-secondary" id="saveBtn">
-                    <i class="fas fa-save"></i> Simpan
+            <div class="header-actions">
+                <button class="btn btn-icon" id="undoBtn" title="Undo (Ctrl+Z)">
+                    <i class="fas fa-undo"></i>
                 </button>
-                <button class="btn btn-primary" id="addPanelBtn">
-                    <i class="fas fa-plus"></i> Panel Baru
+                <button class="btn btn-icon" id="redoBtn" title="Redo (Ctrl+Y)">
+                    <i class="fas fa-redo"></i>
                 </button>
-                <button class="btn btn-secondary" id="authBtn">
-                    <i class="fas fa-user"></i> Login
+                <button class="btn btn-primary" id="newBtn">
+                    <i class="fas fa-plus"></i> New
+                </button>
+                <button class="btn btn-success" id="saveBtn">
+                    <i class="fas fa-save"></i> Save
+                </button>
+                <button class="btn" id="loadBtn">
+                    <i class="fas fa-folder-open"></i> Load
+                </button>
+                <button class="btn btn-icon" id="exportBtn" title="Export">
+                    <i class="fas fa-download"></i>
                 </button>
             </div>
         </header>
 
         <!-- Main Content -->
         <main>
-            <div id="canvas"></div>
-
-            <!-- Instructions Panel -->
-            <div class="instructions" id="instructions">
-                <div class="instructions-header">
-                    <h3>Petunjuk Penggunaan</h3>
-                    <button class="toggle-instructions" id="toggleInstructions">
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
+            <!-- Sidebar -->
+            <div class="sidebar" id="sidebar">
+                <div class="sidebar-section">
+                    <div class="section-title">
+                        <i class="fas fa-shapes"></i>
+                        Panel Types
+                    </div>
+                    <div class="panel-types">
+                        <div class="panel-type" data-type="process" data-color="#2563eb">
+                            <div class="panel-type-icon" style="background-color: #2563eb; color: white;">
+                                <i class="fas fa-cog"></i>
+                            </div>
+                            <div class="panel-type-name">Process</div>
+                        </div>
+                        <div class="panel-type" data-type="decision" data-color="#059669">
+                            <div class="panel-type-icon" style="background-color: #059669; color: white;">
+                                <i class="fas fa-code-branch"></i>
+                            </div>
+                            <div class="panel-type-name">Decision</div>
+                        </div>
+                        <div class="panel-type" data-type="data" data-color="#7c3aed">
+                            <div class="panel-type-icon" style="background-color: #7c3aed; color: white;">
+                                <i class="fas fa-database"></i>
+                            </div>
+                            <div class="panel-type-name">Data</div>
+                        </div>
+                        <div class="panel-type" data-type="terminal" data-color="#dc2626">
+                            <div class="panel-type-icon" style="background-color: #dc2626; color: white;">
+                                <i class="fas fa-play-circle"></i>
+                            </div>
+                            <div class="panel-type-name">Terminal</div>
+                        </div>
+                        <div class="panel-type" data-type="document" data-color="#d97706">
+                            <div class="panel-type-icon" style="background-color: #d97706; color: white;">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <div class="panel-type-name">Document</div>
+                        </div>
+                        <div class="panel-type" data-type="manual" data-color="#0ea5e9">
+                            <div class="panel-type-icon" style="background-color: #0ea5e9; color: white;">
+                                <i class="fas fa-hand-paper"></i>
+                            </div>
+                            <div class="panel-type-name">Manual</div>
+                        </div>
+                    </div>
                 </div>
-                <ul class="instructions-list">
-                    <li><strong>Tambah Panel:</strong> Klik "Panel Baru" atau klik kanan pada canvas</li>
-                    <li><strong>Hubungkan Panel:</strong> Tarik titik bulat pada panel ke panel lain</li>
-                    <li><strong>Pindahkan Panel:</strong> Drag header panel</li>
-                    <li><strong>Ubah Ukuran:</strong> Drag sudut kanan bawah panel</li>
-                    <li><strong>Zoom:</strong> Gunakan scroll mouse atau tombol +/-</li>
-                    <li><strong>Pan Canvas:</strong> Drag canvas dengan mouse kanan</li>
-                    <li><strong>Hapus:</strong> Klik panel lalu tekan <kbd>Delete</kbd></li>
-                    <li><strong>Pilih Warna:</strong> Klik kanan panel → "Ubah Warna"</li>
-                    <li><strong>Simpan:</strong> Klik "Simpan" untuk menyimpan ke cloud</li>
-                </ul>
+
+                <div class="sidebar-section">
+                    <div class="section-title">
+                        <i class="fas fa-palette"></i>
+                        Colors
+                    </div>
+                    <div class="color-picker">
+                        <div class="color-option active" style="background-color: #2563eb;" data-color="#2563eb"></div>
+                        <div class="color-option" style="background-color: #059669;" data-color="#059669"></div>
+                        <div class="color-option" style="background-color: #7c3aed;" data-color="#7c3aed"></div>
+                        <div class="color-option" style="background-color: #dc2626;" data-color="#dc2626"></div>
+                        <div class="color-option" style="background-color: #d97706;" data-color="#d97706"></div>
+                        <div class="color-option" style="background-color: #0ea5e9;" data-color="#0ea5e9"></div>
+                        <div class="color-option" style="background-color: #8b5cf6;" data-color="#8b5cf6"></div>
+                        <div class="color-option" style="background-color: #10b981;" data-color="#10b981"></div>
+                        <div class="color-option" style="background-color: #f59e0b;" data-color="#f59e0b"></div>
+                        <div class="color-option" style="background-color: #ef4444;" data-color="#ef4444"></div>
+                    </div>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="section-title">
+                        <i class="fas fa-tools"></i>
+                        Tools
+                    </div>
+                    <div class="tools-grid">
+                        <div class="tool-btn active" data-tool="select" title="Select Tool (V)">
+                            <i class="tool-icon fas fa-mouse-pointer"></i>
+                            <div class="tool-name">Select</div>
+                        </div>
+                        <div class="tool-btn" data-tool="pan" title="Pan Tool (H)">
+                            <i class="tool-icon fas fa-hand-paper"></i>
+                            <div class="tool-name">Pan</div>
+                        </div>
+                        <div class="tool-btn" data-tool="connect" title="Connect Tool (C)">
+                            <i class="tool-icon fas fa-link"></i>
+                            <div class="tool-name">Connect</div>
+                        </div>
+                        <div class="tool-btn" data-tool="rectangle" title="Rectangle Select (R)">
+                            <i class="tool-icon fas fa-vector-square"></i>
+                            <div class="tool-name">Rectangle</div>
+                        </div>
+                        <div class="tool-btn" data-tool="text" title="Text Tool (T)">
+                            <i class="tool-icon fas fa-font"></i>
+                            <div class="tool-name">Text</div>
+                        </div>
+                        <div class="tool-btn" data-tool="delete" title="Delete Tool (Delete)">
+                            <i class="tool-icon fas fa-trash"></i>
+                            <div class="tool-name">Delete</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="section-title">
+                        <i class="fas fa-sliders-h"></i>
+                        Properties
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Grid Size</label>
+                        <input type="range" class="form-input" id="gridSize" min="10" max="100" value="40">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Connection Style</label>
+                        <select class="form-input" id="connectionStyle">
+                            <option value="straight">Straight</option>
+                            <option value="curved" selected>Curved</option>
+                            <option value="stepped">Stepped</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">
+                            <input type="checkbox" id="snapToGrid" checked> Snap to Grid
+                        </label>
+                    </div>
+                </div>
             </div>
 
-            <!-- Controls -->
-            <div class="controls">
-                <div class="control-group">
-                    <button class="control-btn" id="zoomInBtn" title="Zoom In">
-                        <i class="fas fa-search-plus"></i>
-                    </button>
-                    <button class="control-btn" id="zoomOutBtn" title="Zoom Out">
-                        <i class="fas fa-search-minus"></i>
-                    </button>
-                    <button class="control-btn" id="resetZoomBtn" title="Reset Zoom">
-                        <i class="fas fa-search"></i>
-                    </button>
-                    <div class="zoom-display" id="zoomDisplay">100%</div>
-                </div>
-                <div class="control-group">
-                    <button class="control-btn" id="centerViewBtn" title="Pusatkan Tampilan">
-                        <i class="fas fa-crosshairs"></i>
-                    </button>
-                    <button class="control-btn" id="clearAllBtn" title="Hapus Semua">
-                        <i class="fas fa-trash"></i>
-                    </button>
+            <!-- Canvas Area -->
+            <div class="canvas-container">
+                <div id="canvas"></div>
+                
+                <!-- Canvas Controls -->
+                <div class="canvas-controls">
+                    <div class="control-group">
+                        <button class="control-btn" id="zoomInBtn" title="Zoom In (Ctrl++)">
+                            <i class="fas fa-search-plus"></i>
+                        </button>
+                        <button class="control-btn" id="zoomOutBtn" title="Zoom Out (Ctrl+-)">
+                            <i class="fas fa-search-minus"></i>
+                        </button>
+                        <button class="control-btn" id="resetViewBtn" title="Reset View (Ctrl+0)">
+                            <i class="fas fa-expand-arrows-alt"></i>
+                        </button>
+                        <div class="zoom-display" id="zoomDisplay">100%</div>
+                    </div>
+                    <div class="control-group">
+                        <button class="control-btn" id="centerBtn" title="Center Canvas">
+                            <i class="fas fa-crosshairs"></i>
+                        </button>
+                        <button class="control-btn" id="gridToggleBtn" title="Toggle Grid">
+                            <i class="fas fa-th"></i>
+                        </button>
+                        <button class="control-btn" id="clearBtn" title="Clear All">
+                            <i class="fas fa-broom"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </main>
-    </div>
 
-    <!-- Auth Modal -->
-    <div class="modal" id="authModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="authTitle">Login ke FlowConnect</h2>
-                <p>Simpan dan akses visualisasi Anda dari mana saja</p>
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="status-left">
+                <div class="status-item">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Ready</span>
+                </div>
+                <div class="status-item" id="cursorPos">
+                    <i class="fas fa-crosshairs"></i>
+                    <span>X: 0, Y: 0</span>
+                </div>
             </div>
-            <form id="authForm">
-                <div class="form-group">
-                    <label for="authEmail">Email</label>
-                    <input type="email" id="authEmail" placeholder="nama@email.com" required>
+            <div class="status-right">
+                <div class="status-item">
+                    <i class="fas fa-clock"></i>
+                    <span id="currentTime">--:--</span>
                 </div>
-                <div class="form-group">
-                    <label for="authPassword">Password</label>
-                    <input type="password" id="authPassword" placeholder="••••••••" required>
+                <div class="status-item">
+                    <i class="fas fa-save"></i>
+                    <span>Auto-save: <span id="autoSaveStatus">On</span></span>
                 </div>
-                <div class="form-actions">
-                    <button type="button" class="btn btn-secondary" id="cancelAuthBtn" style="flex: 1;">Batal</button>
-                    <button type="submit" class="btn btn-primary" id="submitAuthBtn" style="flex: 1;">Login</button>
-                </div>
-            </form>
-            <div class="form-toggle">
-                <span id="authToggleText">Belum punya akun?</span>
-                <a id="authToggleLink">Daftar disini</a>
             </div>
         </div>
     </div>
 
-    <!-- Panel Modal -->
-    <div class="modal" id="panelModal">
-        <div class="modal-content">
+    <!-- Modals -->
+    <div class="modal-overlay" id="fileModal">
+        <div class="modal">
             <div class="modal-header">
-                <h2>Buat Panel Baru</h2>
-                <p>Tambahkan panel baru ke visualisasi Anda</p>
+                <div class="modal-title">File Operations</div>
+                <button class="modal-close" id="closeFileModal">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
-            <form id="panelForm">
+            <div class="modal-body">
+                <div class="file-actions">
+                    <div class="file-action" id="saveJsonAction">
+                        <div class="file-action-icon">
+                            <i class="fas fa-file-export"></i>
+                        </div>
+                        <div class="file-action-title">Save as JSON</div>
+                        <div class="file-action-desc">Export your diagram as JSON file for backup or sharing</div>
+                    </div>
+                    <div class="file-action" id="loadJsonAction">
+                        <div class="file-action-icon">
+                            <i class="fas fa-file-import"></i>
+                        </div>
+                        <div class="file-action-title">Load from JSON</div>
+                        <div class="file-action-desc">Import a diagram from JSON file</div>
+                    </div>
+                    <div class="file-action" id="saveLocalAction">
+                        <div class="file-action-icon">
+                            <i class="fas fa-hdd"></i>
+                        </div>
+                        <div class="file-action-title">Save to Browser</div>
+                        <div class="file-action-desc">Save diagram to browser's local storage</div>
+                    </div>
+                    <div class="file-action" id="loadLocalAction">
+                        <div class="file-action-icon">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <div class="file-action-title">Load from Browser</div>
+                        <div class="file-action-desc">Load last saved diagram from browser</div>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 30px;">
+                    <label class="form-label">Current File Name</label>
+                    <input type="text" class="form-input" id="fileNameInput" value="MyDiagram">
+                </div>
+
                 <div class="form-group">
-                    <label for="panelName">Nama Panel</label>
-                    <input type="text" id="panelName" placeholder="Contoh: Proses Utama" required>
+                    <label class="form-label">Export Options</label>
+                    <div style="display: flex; gap: 10px; margin-top: 8px;">
+                        <label style="display: flex; align-items: center; gap: 6px;">
+                            <input type="checkbox" id="includeMetadata" checked>
+                            <span>Include metadata</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 6px;">
+                            <input type="checkbox" id="compressJson" checked>
+                            <span>Compress JSON</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" id="cancelFileBtn">Cancel</button>
+                <button class="btn btn-primary" id="exportPngBtn">
+                    <i class="fas fa-image"></i> Export as PNG
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="panelModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Panel Properties</div>
+                <button class="modal-close" id="closePanelModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Panel Name</label>
+                    <input type="text" class="form-input" id="panelNameInput" placeholder="Enter panel name">
                 </div>
                 <div class="form-group">
-                    <label for="panelColor">Warna Panel</label>
-                    <select id="panelColor">
-                        <option value="#3e8bff">Biru</option>
-                        <option value="#00d4aa">Hijau</option>
-                        <option value="#ff6b81">Merah Muda</option>
-                        <option value="#9d4edd">Ungu</option>
-                        <option value="#ff9e00">Oranye</option>
+                    <label class="form-label">Description</label>
+                    <textarea class="form-textarea" id="panelDescInput" placeholder="Optional description"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Panel Type</label>
+                    <select class="form-input" id="panelTypeSelect">
+                        <option value="process">Process</option>
+                        <option value="decision">Decision</option>
+                        <option value="data">Data</option>
+                        <option value="terminal">Terminal</option>
+                        <option value="document">Document</option>
+                        <option value="manual">Manual</option>
                     </select>
                 </div>
-                <div class="form-actions">
-                    <button type="button" class="btn btn-secondary" id="cancelPanelBtn">Batal</button>
-                    <button type="submit" class="btn btn-primary">Buat Panel</button>
+                <div class="form-group">
+                    <label class="form-label">Color</label>
+                    <div class="color-picker" id="modalColorPicker">
+                        <div class="color-option active" style="background-color: #2563eb;" data-color="#2563eb"></div>
+                        <div class="color-option" style="background-color: #059669;" data-color="#059669"></div>
+                        <div class="color-option" style="background-color: #7c3aed;" data-color="#7c3aed"></div>
+                        <div class="color-option" style="background-color: #dc2626;" data-color="#dc2626"></div>
+                        <div class="color-option" style="background-color: #d97706;" data-color="#d97706"></div>
+                    </div>
                 </div>
-            </form>
+                <div class="form-group">
+                    <label class="form-label">Size</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div>
+                            <label class="form-label">Width</label>
+                            <input type="number" class="form-input" id="panelWidth" min="100" max="800" value="240">
+                        </div>
+                        <div>
+                            <label class="form-label">Height</label>
+                            <input type="number" class="form-input" id="panelHeight" min="80" max="600" value="160">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" id="cancelPanelBtn">Cancel</button>
+                <button class="btn btn-danger" id="deletePanelBtn">
+                    <i class="fas fa-trash"></i> Delete
+                </button>
+                <button class="btn btn-primary" id="savePanelBtn">Save Changes</button>
+            </div>
         </div>
     </div>
 
     <!-- Context Menu -->
     <div class="context-menu" id="contextMenu">
-        <div class="context-menu-item" id="ctxAddPanel">
-            <i class="fas fa-plus"></i> Tambah Panel
+        <div class="context-menu-item" id="ctxEditPanel">
+            <i class="fas fa-edit"></i> Edit Panel
+        </div>
+        <div class="context-menu-item" id="ctxDuplicatePanel">
+            <i class="fas fa-copy"></i> Duplicate
         </div>
         <div class="context-menu-item" id="ctxChangeColor">
-            <i class="fas fa-palette"></i> Ubah Warna
+            <i class="fas fa-palette"></i> Change Color
         </div>
-        <div class="context-menu-item" id="ctxDuplicate">
-            <i class="fas fa-copy"></i> Duplikat
+        <div class="context-menu-divider"></div>
+        <div class="context-menu-item" id="ctxBringForward">
+            <i class="fas fa-arrow-up"></i> Bring Forward
         </div>
-        <div class="context-menu-item" id="ctxDelete">
-            <i class="fas fa-trash"></i> Hapus
+        <div class="context-menu-item" id="ctxSendBackward">
+            <i class="fas fa-arrow-down"></i> Send Backward
+        </div>
+        <div class="context-menu-divider"></div>
+        <div class="context-menu-item" id="ctxDeletePanel">
+            <i class="fas fa-trash"></i> Delete Panel
         </div>
     </div>
 
@@ -908,165 +1481,246 @@
             <i class="fas fa-check"></i>
         </div>
         <div class="notification-content">
-            <div class="notification-title" id="notificationTitle">Berhasil!</div>
-            <div class="notification-message" id="notificationMessage">Operasi berhasil dilakukan.</div>
+            <div class="notification-title" id="notificationTitle">Success</div>
+            <div class="notification-message" id="notificationMessage">Operation completed successfully</div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        // Supabase Configuration
-        const SUPABASE_URL = 'https://mqonelsoqyvrasrzrzfl.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1xb25lbHNvcXl2cmFzcnpyemZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDkxMjE5MzMsImV4cCI6MjAyNDY5NzkzM30.Kw6z26LJsc5bYxayMjBZZqR9x1t9qkijioJk6iZBe-s';
-        
-        // Initialize Supabase
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    <!-- Hidden file input for JSON import -->
+    <input type="file" id="jsonFileInput" accept=".json" style="display: none;">
+    
+    <!-- Hidden anchor for downloads -->
+    <a id="downloadAnchor" style="display: none;"></a>
 
+    <script>
         // Application State
         const state = {
             panels: new Map(),
             connections: new Map(),
             nextPanelId: 1,
             nextConnectionId: 1,
+            currentTool: 'select',
+            selectedPanels: new Set(),
+            draggedPanel: null,
+            dragOffset: { x: 0, y: 0 },
+            isDragging: false,
             isConnecting: false,
             connectingFrom: null,
             connectingPoint: null,
-            selectedPanel: null,
-            draggedPanel: null,
-            dragOffset: { x: 0, y: 0 },
             zoom: 1,
             canvasOffset: { x: 0, y: 0 },
             isPanning: false,
             panStart: { x: 0, y: 0 },
-            user: null,
-            currentProject: null,
-            contextMenuTarget: null
+            selectedColor: '#2563eb',
+            history: [],
+            historyIndex: -1,
+            currentFileName: 'MyDiagram',
+            autoSaveEnabled: true,
+            gridSize: 40,
+            snapToGrid: true
         };
 
         // DOM Elements
         const canvas = document.getElementById('canvas');
+        const fileModal = document.getElementById('fileModal');
         const panelModal = document.getElementById('panelModal');
-        const authModal = document.getElementById('authModal');
         const contextMenu = document.getElementById('contextMenu');
         const notification = document.getElementById('notification');
-        const loadingOverlay = document.getElementById('loadingOverlay');
-        const instructions = document.getElementById('instructions');
+        const jsonFileInput = document.getElementById('jsonFileInput');
+        const downloadAnchor = document.getElementById('downloadAnchor');
 
         // Initialize application
-        document.addEventListener('DOMContentLoaded', async () => {
-            initializeEventListeners();
-            checkAuthStatus();
-            setupDefaultPanels();
-            
-            // Hide loading after a short delay
-            setTimeout(() => {
-                loadingOverlay.style.display = 'none';
-            }, 1000);
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeApp();
+            setupEventListeners();
+            loadFromLocalStorage();
+            updateTime();
+            setInterval(updateTime, 60000);
+            setInterval(autoSave, 30000); // Auto-save every 30 seconds
         });
 
-        // Initialize event listeners
-        function initializeEventListeners() {
-            // Button event listeners
-            document.getElementById('addPanelBtn').addEventListener('click', showPanelModal);
-            document.getElementById('saveBtn').addEventListener('click', saveProject);
-            document.getElementById('authBtn').addEventListener('click', showAuthModal);
-            document.getElementById('clearAllBtn').addEventListener('click', clearAll);
-            document.getElementById('centerViewBtn').addEventListener('click', centerView);
+        function initializeApp() {
+            // Create some initial panels for demonstration
+            createPanel('Start Process', 300, 200, '#2563eb', 'process');
+            createPanel('Process Data', 500, 200, '#059669', 'process');
+            createPanel('Decision Point', 700, 200, '#7c3aed', 'decision');
             
-            // Zoom controls
+            updateCounts();
+            updateCanvasTransform();
+            updateDocumentName();
+            
+            // Initialize tools
+            document.querySelector('[data-tool="select"]').classList.add('active');
+        }
+
+        function setupEventListeners() {
+            // Tool buttons
+            document.querySelectorAll('.tool-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    state.currentTool = btn.dataset.tool;
+                    updateCursor();
+                });
+            });
+
+            // Panel type buttons
+            document.querySelectorAll('.panel-type').forEach(type => {
+                type.addEventListener('click', () => {
+                    const panelType = type.dataset.type;
+                    const color = type.dataset.color;
+                    createPanel(`${panelType.charAt(0).toUpperCase() + panelType.slice(1)} Panel`, 
+                               window.innerWidth / 2 - 120, 
+                               window.innerHeight / 2 - 80, 
+                               color, panelType);
+                });
+            });
+
+            // Color picker
+            document.querySelectorAll('.color-option').forEach(color => {
+                color.addEventListener('click', () => {
+                    document.querySelectorAll('.color-option').forEach(c => c.classList.remove('active'));
+                    color.classList.add('active');
+                    state.selectedColor = color.dataset.color;
+                    
+                    // Update selected panels color
+                    state.selectedPanels.forEach(panelId => {
+                        const panel = state.panels.get(panelId);
+                        if (panel) {
+                            panel.color = state.selectedColor;
+                            renderPanel(panel);
+                            updateConnectionPoints(panel);
+                        }
+                    });
+                });
+            });
+
+            // File operations
+            document.getElementById('saveBtn').addEventListener('click', () => fileModal.classList.add('active'));
+            document.getElementById('loadBtn').addEventListener('click', () => fileModal.classList.add('active'));
+            document.getElementById('newBtn').addEventListener('click', createNewDiagram);
+            document.getElementById('exportBtn').addEventListener('click', exportAsPNG);
+            
+            document.getElementById('saveJsonAction').addEventListener('click', saveAsJSON);
+            document.getElementById('loadJsonAction').addEventListener('click', () => jsonFileInput.click());
+            document.getElementById('saveLocalAction').addEventListener('click', saveToLocalStorage);
+            document.getElementById('loadLocalAction').addEventListener('click', loadFromLocalStorage);
+            
+            jsonFileInput.addEventListener('change', handleJsonFileUpload);
+            
+            document.getElementById('closeFileModal').addEventListener('click', () => fileModal.classList.remove('active'));
+            document.getElementById('cancelFileBtn').addEventListener('click', () => fileModal.classList.remove('active'));
+            document.getElementById('exportPngBtn').addEventListener('click', exportAsPNG);
+
+            // Canvas controls
             document.getElementById('zoomInBtn').addEventListener('click', () => zoomCanvas(0.1));
             document.getElementById('zoomOutBtn').addEventListener('click', () => zoomCanvas(-0.1));
-            document.getElementById('resetZoomBtn').addEventListener('click', resetZoom);
+            document.getElementById('resetViewBtn').addEventListener('click', resetView);
+            document.getElementById('centerBtn').addEventListener('click', centerView);
+            document.getElementById('gridToggleBtn').addEventListener('click', toggleGrid);
+            document.getElementById('clearBtn').addEventListener('click', clearCanvas);
             
-            // Canvas interactions
+            document.getElementById('undoBtn').addEventListener('click', undo);
+            document.getElementById('redoBtn').addEventListener('click', redo);
+
+            // Panel modal
+            document.getElementById('closePanelModal').addEventListener('click', () => panelModal.classList.remove('active'));
+            document.getElementById('cancelPanelBtn').addEventListener('click', () => panelModal.classList.remove('active'));
+            document.getElementById('deletePanelBtn').addEventListener('click', deleteSelectedPanel);
+            document.getElementById('savePanelBtn').addEventListener('click', savePanelChanges);
+            
+            // Modal color picker
+            document.querySelectorAll('#modalColorPicker .color-option').forEach(color => {
+                color.addEventListener('click', () => {
+                    document.querySelectorAll('#modalColorPicker .color-option').forEach(c => c.classList.remove('active'));
+                    color.classList.add('active');
+                });
+            });
+
+            // Context menu
+            document.getElementById('ctxEditPanel').addEventListener('click', editSelectedPanel);
+            document.getElementById('ctxDuplicatePanel').addEventListener('click', duplicateSelectedPanel);
+            document.getElementById('ctxChangeColor').addEventListener('click', changePanelColor);
+            document.getElementById('ctxBringForward').addEventListener('click', () => changePanelZIndex('forward'));
+            document.getElementById('ctxSendBackward').addEventListener('click', () => changePanelZIndex('backward'));
+            document.getElementById('ctxDeletePanel').addEventListener('click', deleteSelectedPanel);
+
+            // Mobile toggle
+            document.getElementById('mobileToggle').addEventListener('click', () => {
+                document.getElementById('sidebar').classList.toggle('active');
+            });
+
+            // Settings
+            document.getElementById('gridSize').addEventListener('input', (e) => {
+                state.gridSize = parseInt(e.target.value);
+                updateGrid();
+            });
+            
+            document.getElementById('snapToGrid').addEventListener('change', (e) => {
+                state.snapToGrid = e.target.checked;
+            });
+            
+            document.getElementById('connectionStyle').addEventListener('change', (e) => {
+                // Update connection style
+                updateAllConnections();
+            });
+
+            // Canvas events
             canvas.addEventListener('mousedown', handleCanvasMouseDown);
             canvas.addEventListener('mousemove', handleCanvasMouseMove);
             canvas.addEventListener('mouseup', handleCanvasMouseUp);
             canvas.addEventListener('wheel', handleCanvasWheel);
             canvas.addEventListener('contextmenu', handleCanvasContextMenu);
             
-            // Modal controls
-            document.getElementById('cancelPanelBtn').addEventListener('click', () => panelModal.classList.remove('active'));
-            document.getElementById('cancelAuthBtn').addEventListener('click', () => authModal.classList.remove('active'));
-            
-            // Form submissions
-            document.getElementById('panelForm').addEventListener('submit', handlePanelFormSubmit);
-            document.getElementById('authForm').addEventListener('submit', handleAuthFormSubmit);
-            
-            // Context menu
-            document.getElementById('ctxAddPanel').addEventListener('click', showPanelModal);
-            document.getElementById('ctxChangeColor').addEventListener('click', changePanelColor);
-            document.getElementById('ctxDuplicate').addEventListener('click', duplicatePanel);
-            document.getElementById('ctxDelete').addEventListener('click', deleteSelectedPanel);
-            
-            // Instructions toggle
-            document.getElementById('toggleInstructions').addEventListener('click', toggleInstructions);
-            
-            // Auth toggle
-            document.getElementById('authToggleLink').addEventListener('click', toggleAuthMode);
-            
+            // Touch events for mobile
+            canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+            canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
+            canvas.addEventListener('touchend', handleTouchEnd);
+
             // Keyboard shortcuts
             document.addEventListener('keydown', handleKeyDown);
             
             // Close context menu on click elsewhere
-            document.addEventListener('click', () => {
-                contextMenu.classList.remove('active');
+            document.addEventListener('click', (e) => {
+                if (!contextMenu.contains(e.target)) {
+                    contextMenu.classList.remove('active');
+                }
             });
         }
 
-        // Setup default panels for demonstration
-        function setupDefaultPanels() {
-            const now = new Date();
-            const dateStr = now.toISOString().split('T')[0];
-            const timeStr = now.toTimeString().split(' ')[0].substring(0, 5);
-            
-            // Create some default panels
-            createPanel('Input Data', 200, 200, '#3e8bff');
-            createPanel('Proses Utama', 500, 200, '#00d4aa');
-            createPanel('Output', 800, 200, '#ff6b81');
-            createPanel('Validasi', 350, 400, '#9d4edd');
-            createPanel('Logging', 650, 400, '#ff9e00');
-            
-            // Update counts
-            updateCounts();
-        }
-
-        // Create a new panel
-        function createPanel(name, x, y, color = '#3e8bff') {
+        function createPanel(name, x, y, color, type = 'process') {
             const panelId = state.nextPanelId++;
             const now = new Date();
-            const dateStr = now.toISOString().split('T')[0];
-            const timeStr = now.toTimeString().split(' ')[0].substring(0, 5);
             
             const panel = {
                 id: panelId,
                 name: name,
-                x: x,
-                y: y,
-                width: 280,
-                height: 200,
+                x: state.snapToGrid ? Math.round(x / state.gridSize) * state.gridSize : x,
+                y: state.snapToGrid ? Math.round(y / state.gridSize) * state.gridSize : y,
+                width: 240,
+                height: 160,
                 color: color,
+                type: type,
+                zIndex: panelId,
                 fields: [
                     { name: 'ID', value: panelId.toString() },
-                    { name: 'Dibuat', value: dateStr },
-                    { name: 'Waktu', value: timeStr },
-                    { name: 'Status', value: 'Aktif' }
-                ],
-                connectionPoints: []
+                    { name: 'CREATED', value: now.toISOString().split('T')[0] },
+                    { name: 'TIME', value: now.toTimeString().split(' ')[0].substring(0, 5) },
+                    { name: 'TYPE', value: type.toUpperCase() }
+                ]
             };
             
             state.panels.set(panelId, panel);
             renderPanel(panel);
-            
-            // Create connection points
             createConnectionPoints(panel);
+            updateCounts();
+            saveToHistory('create_panel');
             
             return panel;
         }
 
-        // Render a panel
         function renderPanel(panel) {
-            // Remove existing panel if any
+            // Remove existing panel
             const existing = document.getElementById(`panel-${panel.id}`);
             if (existing) existing.remove();
             
@@ -1079,21 +1733,29 @@
             panelEl.style.width = `${panel.width}px`;
             panelEl.style.height = `${panel.height}px`;
             panelEl.style.borderColor = panel.color;
+            panelEl.style.zIndex = panel.zIndex;
             
             // Panel header
             const header = document.createElement('div');
             header.className = 'panel-header';
-            header.style.borderBottomColor = panel.color + '40';
             
             const title = document.createElement('div');
             title.className = 'panel-title';
             title.innerHTML = `
-                <span class="panel-color" style="background-color: ${panel.color}"></span>
+                <span class="panel-color-indicator" style="background-color: ${panel.color}"></span>
                 ${panel.name}
             `;
             
             const actions = document.createElement('div');
             actions.className = 'panel-actions';
+            actions.innerHTML = `
+                <button class="panel-action-btn" title="Edit">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="panel-action-btn" title="Delete">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
             
             header.appendChild(title);
             header.appendChild(actions);
@@ -1115,120 +1777,96 @@
             panelEl.appendChild(header);
             panelEl.appendChild(content);
             
-            // Event listeners for panel
-            header.addEventListener('mousedown', startDraggingPanel);
+            // Event listeners
+            header.addEventListener('mousedown', (e) => startDraggingPanel(e, panelId));
+            header.querySelector('.panel-action-btn:nth-child(1)').addEventListener('click', (e) => {
+                e.stopPropagation();
+                editPanel(panel.id);
+            });
+            header.querySelector('.panel-action-btn:nth-child(2)').addEventListener('click', (e) => {
+                e.stopPropagation();
+                deletePanel(panel.id);
+            });
+            
             panelEl.addEventListener('mousedown', (e) => {
                 if (e.target === panelEl || e.target === content) {
-                    selectPanel(panel.id);
+                    selectPanel(panel.id, e.shiftKey);
                 }
             });
             
             panelEl.addEventListener('contextmenu', (e) => {
                 e.preventDefault();
-                selectPanel(panel.id);
-                showContextMenu(e.clientX, e.clientY, 'panel');
+                if (!state.selectedPanels.has(panel.id)) {
+                    selectPanel(panel.id, false);
+                }
+                showContextMenu(e.clientX, e.clientY);
             });
             
             // Add resize handle
-            panelEl.style.resize = 'both';
-            panelEl.addEventListener('mouseup', () => {
+            const observer = new ResizeObserver(() => {
                 if (panelEl.style.width && panelEl.style.height) {
                     panel.width = parseInt(panelEl.style.width);
                     panel.height = parseInt(panelEl.style.height);
                     updateConnectionPoints(panel);
                 }
             });
+            observer.observe(panelEl);
             
             canvas.appendChild(panelEl);
         }
 
-        // Create connection points for a panel
         function createConnectionPoints(panel) {
-            // Remove existing connection points
-            panel.connectionPoints.forEach(pointId => {
-                const point = document.getElementById(`point-${pointId}`);
-                if (point) point.remove();
-            });
+            // Remove existing points
+            document.querySelectorAll(`[data-panel-id="${panel.id}"]`).forEach(p => p.remove());
             
-            panel.connectionPoints = [];
-            
-            // Create points at each corner
-            const corners = [
-                { x: 0, y: 0 }, // Top-left
-                { x: panel.width, y: 0 }, // Top-right
-                { x: 0, y: panel.height }, // Bottom-left
-                { x: panel.width, y: panel.height } // Bottom-right
+            // Create points at corners
+            const points = [
+                { x: 0, y: 0, side: 'top-left' },
+                { x: panel.width, y: 0, side: 'top-right' },
+                { x: 0, y: panel.height, side: 'bottom-left' },
+                { x: panel.width, y: panel.height, side: 'bottom-right' }
             ];
             
-            corners.forEach((corner, index) => {
-                const pointId = state.nextConnectionId++;
-                panel.connectionPoints.push(pointId);
+            points.forEach((point, index) => {
+                const pointEl = document.createElement('div');
+                pointEl.className = 'connection-point';
+                pointEl.style.left = `${panel.x + point.x - 9}px`;
+                pointEl.style.top = `${panel.y + point.y - 9}px`;
+                pointEl.dataset.panelId = panel.id;
+                pointEl.dataset.pointIndex = index;
+                pointEl.dataset.side = point.side;
                 
-                const point = document.createElement('div');
-                point.className = 'connection-point';
-                point.id = `point-${pointId}`;
-                point.style.left = `${panel.x + corner.x - 8}px`;
-                point.style.top = `${panel.y + corner.y - 8}px`;
-                point.dataset.panelId = panel.id;
-                point.dataset.pointId = pointId;
-                point.dataset.index = index;
+                pointEl.addEventListener('mousedown', startConnection);
+                pointEl.addEventListener('touchstart', startConnectionTouch);
                 
-                point.addEventListener('mousedown', startConnecting);
-                
-                canvas.appendChild(point);
+                canvas.appendChild(pointEl);
             });
         }
 
-        // Update connection points position
         function updateConnectionPoints(panel) {
-            const corners = [
+            const points = [
                 { x: 0, y: 0 },
                 { x: panel.width, y: 0 },
                 { x: 0, y: panel.height },
                 { x: panel.width, y: panel.height }
             ];
             
-            panel.connectionPoints.forEach((pointId, index) => {
-                const point = document.getElementById(`point-${pointId}`);
-                if (point) {
-                    point.style.left = `${panel.x + corners[index].x - 8}px`;
-                    point.style.top = `${panel.y + corners[index].y - 8}px`;
+            points.forEach((point, index) => {
+                const pointEl = document.querySelector(`[data-panel-id="${panel.id}"][data-point-index="${index}"]`);
+                if (pointEl) {
+                    pointEl.style.left = `${panel.x + point.x - 9}px`;
+                    pointEl.style.top = `${panel.y + point.y - 9}px`;
                 }
             });
             
-            // Update connections
             updateAllConnections();
         }
 
-        // Start connecting from a point
-        function startConnecting(e) {
-            e.stopPropagation();
-            state.isConnecting = true;
-            state.connectingFrom = parseInt(e.target.dataset.panelId);
-            state.connectingPoint = e.target;
-            
-            // Highlight the starting point
-            state.connectingPoint.classList.add('source');
-            
-            // Create temporary connection line
-            const tempLine = document.createElement('div');
-            tempLine.id = 'temp-connection';
-            tempLine.style.position = 'absolute';
-            tempLine.style.pointerEvents = 'none';
-            tempLine.style.zIndex = '100';
-            canvas.appendChild(tempLine);
-            
-            // Update cursor
-            canvas.style.cursor = 'crosshair';
-        }
-
-        // Create a connection between two panels
         function createConnection(fromPanelId, toPanelId, fromPointIndex = 0, toPointIndex = 1) {
-            // Check if connection already exists
+            // Check for duplicate connection
             for (const conn of state.connections.values()) {
-                if ((conn.fromPanelId === fromPanelId && conn.toPanelId === toPanelId) ||
-                    (conn.fromPanelId === toPanelId && conn.toPanelId === fromPanelId)) {
-                    return; // Connection already exists
+                if (conn.fromPanelId === fromPanelId && conn.toPanelId === toPanelId) {
+                    return;
                 }
             }
             
@@ -1244,13 +1882,13 @@
             state.connections.set(connectionId, connection);
             renderConnection(connection);
             updateCounts();
+            saveToHistory('create_connection');
             
-            showNotification('Koneksi berhasil dibuat', 'success');
+            return connection;
         }
 
-        // Render a connection
         function renderConnection(connection) {
-            // Remove existing connection if any
+            // Remove existing
             const existing = document.getElementById(`connection-${connection.id}`);
             if (existing) existing.remove();
             
@@ -1259,135 +1897,176 @@
             
             if (!fromPanel || !toPanel) return;
             
-            // Calculate connection points
-            const fromCorners = [
+            // Calculate points
+            const fromPoints = [
                 { x: fromPanel.x, y: fromPanel.y },
                 { x: fromPanel.x + fromPanel.width, y: fromPanel.y },
                 { x: fromPanel.x, y: fromPanel.y + fromPanel.height },
                 { x: fromPanel.x + fromPanel.width, y: fromPanel.y + fromPanel.height }
             ];
             
-            const toCorners = [
+            const toPoints = [
                 { x: toPanel.x, y: toPanel.y },
                 { x: toPanel.x + toPanel.width, y: toPanel.y },
                 { x: toPanel.x, y: toPanel.y + toPanel.height },
                 { x: toPanel.x + toPanel.width, y: toPanel.y + toPanel.height }
             ];
             
-            const fromPoint = fromCorners[connection.fromPointIndex];
-            const toPoint = toCorners[connection.toPointIndex];
+            const fromPoint = fromPoints[connection.fromPointIndex];
+            const toPoint = toPoints[connection.toPointIndex];
             
-            // Create SVG element
+            // Create SVG
             const svgNS = "http://www.w3.org/2000/svg";
-            const connectionEl = document.createElementNS(svgNS, "svg");
-            connectionEl.className = "connection";
-            connectionEl.id = `connection-${connection.id}`;
-            connectionEl.style.position = "absolute";
-            connectionEl.style.top = "0";
-            connectionEl.style.left = "0";
-            connectionEl.style.width = "100%";
-            connectionEl.style.height = "100%";
-            connectionEl.style.zIndex = "1";
-            connectionEl.style.pointerEvents = "none";
+            const svg = document.createElementNS(svgNS, "svg");
+            svg.className = "connection";
+            svg.id = `connection-${connection.id}`;
+            svg.style.position = "absolute";
+            svg.style.top = "0";
+            svg.style.left = "0";
+            svg.style.width = "100%";
+            svg.style.height = "100%";
+            svg.style.zIndex = "5";
+            svg.style.pointerEvents = "none";
             
-            // Create path
             const path = document.createElementNS(svgNS, "path");
             path.classList.add("connection-line");
             path.setAttribute("stroke", fromPanel.color);
             
-            // Calculate control points for curved line
-            const dx = toPoint.x - fromPoint.x;
-            const dy = toPoint.y - fromPoint.y;
+            const style = document.getElementById('connectionStyle').value;
+            let pathData;
             
-            // Create a nice curved line
-            const pathData = `
-                M ${fromPoint.x} ${fromPoint.y}
-                C ${fromPoint.x + dx * 0.5} ${fromPoint.y},
-                  ${toPoint.x - dx * 0.5} ${toPoint.y},
-                  ${toPoint.x} ${toPoint.y}
-            `;
+            if (style === 'straight') {
+                pathData = `M ${fromPoint.x} ${fromPoint.y} L ${toPoint.x} ${toPoint.y}`;
+            } else if (style === 'stepped') {
+                const midX = (fromPoint.x + toPoint.x) / 2;
+                pathData = `M ${fromPoint.x} ${fromPoint.y} H ${midX} V ${toPoint.y} H ${toPoint.x}`;
+            } else {
+                // Curved
+                const dx = toPoint.x - fromPoint.x;
+                const dy = toPoint.y - fromPoint.y;
+                const controlX1 = fromPoint.x + dx * 0.5;
+                const controlY1 = fromPoint.y;
+                const controlX2 = toPoint.x - dx * 0.5;
+                const controlY2 = toPoint.y;
+                pathData = `M ${fromPoint.x} ${fromPoint.y} C ${controlX1} ${controlY1}, ${controlX2} ${controlY2}, ${toPoint.x} ${toPoint.y}`;
+            }
             
             path.setAttribute("d", pathData);
             path.setAttribute("fill", "none");
-            path.setAttribute("stroke-width", "2");
+            path.setAttribute("stroke-width", "3");
             
-            connectionEl.appendChild(path);
-            canvas.appendChild(connectionEl);
+            svg.appendChild(path);
+            canvas.appendChild(svg);
         }
 
-        // Update all connections
         function updateAllConnections() {
-            state.connections.forEach(connection => {
-                renderConnection(connection);
-            });
+            state.connections.forEach(conn => renderConnection(conn));
         }
 
-        // Start dragging a panel
-        function startDraggingPanel(e) {
-            const panelId = parseInt(e.target.closest('.panel').id.split('-')[1]);
-            const panel = state.panels.get(panelId);
+        function startDraggingPanel(e, panelId) {
+            if (state.currentTool !== 'select') return;
             
+            const panel = state.panels.get(panelId);
             if (!panel) return;
             
             state.draggedPanel = panel;
+            state.isDragging = true;
             state.dragOffset.x = e.clientX - panel.x;
             state.dragOffset.y = e.clientY - panel.y;
             
-            // Add dragging class
-            e.target.closest('.panel').classList.add('dragging');
+            panelEl = document.getElementById(`panel-${panelId}`);
+            panelEl.classList.add('dragging');
+            
+            if (!state.selectedPanels.has(panelId)) {
+                selectPanel(panelId, false);
+            }
             
             e.preventDefault();
         }
 
-        // Select a panel
-        function selectPanel(panelId) {
-            // Deselect all panels
-            document.querySelectorAll('.panel').forEach(p => {
-                p.classList.remove('selected');
-            });
+        function selectPanel(panelId, multiSelect = false) {
+            if (!multiSelect) {
+                state.selectedPanels.forEach(id => {
+                    const el = document.getElementById(`panel-${id}`);
+                    if (el) el.classList.remove('selected');
+                });
+                state.selectedPanels.clear();
+            }
             
-            state.selectedPanel = panelId;
-            
-            // Select the clicked panel
+            state.selectedPanels.add(panelId);
             const panelEl = document.getElementById(`panel-${panelId}`);
             if (panelEl) {
                 panelEl.classList.add('selected');
+                panelEl.style.zIndex = 1000 + state.selectedPanels.size;
             }
         }
 
-        // Handle canvas mouse down
+        function editPanel(panelId) {
+            const panel = state.panels.get(panelId);
+            if (!panel) return;
+            
+            document.getElementById('panelNameInput').value = panel.name;
+            document.getElementById('panelTypeSelect').value = panel.type;
+            document.getElementById('panelWidth').value = panel.width;
+            document.getElementById('panelHeight').value = panel.height;
+            
+            // Set color in modal picker
+            document.querySelectorAll('#modalColorPicker .color-option').forEach(c => {
+                c.classList.toggle('active', c.dataset.color === panel.color);
+            });
+            
+            panelModal.dataset.editingPanelId = panelId;
+            panelModal.classList.add('active');
+        }
+
         function handleCanvasMouseDown(e) {
-            if (e.button === 2) { // Right click
+            if (e.button === 2) return; // Right click handled separately
+            
+            if (state.currentTool === 'pan') {
                 state.isPanning = true;
                 state.panStart.x = e.clientX - state.canvasOffset.x;
                 state.panStart.y = e.clientY - state.canvasOffset.y;
                 canvas.style.cursor = 'grabbing';
                 e.preventDefault();
-            } else if (e.button === 0) { // Left click
-                // Deselect all panels if clicking on canvas
+            } else if (state.currentTool === 'select') {
+                // Clear selection if clicking on canvas (not panel)
                 if (e.target === canvas) {
-                    document.querySelectorAll('.panel').forEach(p => {
-                        p.classList.remove('selected');
+                    state.selectedPanels.forEach(id => {
+                        const el = document.getElementById(`panel-${id}`);
+                        if (el) el.classList.remove('selected');
                     });
-                    state.selectedPanel = null;
+                    state.selectedPanels.clear();
                 }
             }
         }
 
-        // Handle canvas mouse move
         function handleCanvasMouseMove(e) {
+            // Update cursor position in status bar
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            document.getElementById('cursorPos').querySelector('span').textContent = 
+                `X: ${Math.round(x)}, Y: ${Math.round(y)}`;
+            
             // Handle panel dragging
-            if (state.draggedPanel) {
-                state.draggedPanel.x = e.clientX - state.dragOffset.x;
-                state.draggedPanel.y = e.clientY - state.dragOffset.y;
+            if (state.isDragging && state.draggedPanel) {
+                let newX = e.clientX - state.dragOffset.x;
+                let newY = e.clientY - state.dragOffset.y;
+                
+                if (state.snapToGrid) {
+                    newX = Math.round(newX / state.gridSize) * state.gridSize;
+                    newY = Math.round(newY / state.gridSize) * state.gridSize;
+                }
+                
+                state.draggedPanel.x = newX;
+                state.draggedPanel.y = newY;
                 
                 const panelEl = document.getElementById(`panel-${state.draggedPanel.id}`);
                 if (panelEl) {
-                    panelEl.style.left = `${state.draggedPanel.x}px`;
-                    panelEl.style.top = `${state.draggedPanel.y}px`;
+                    panelEl.style.left = `${newX}px`;
+                    panelEl.style.top = `${newY}px`;
                 }
                 
-                // Update connection points
                 updateConnectionPoints(state.draggedPanel);
             }
             
@@ -1395,633 +2074,718 @@
             if (state.isPanning) {
                 state.canvasOffset.x = e.clientX - state.panStart.x;
                 state.canvasOffset.y = e.clientY - state.panStart.y;
-                
-                canvas.style.transform = `translate(${state.canvasOffset.x}px, ${state.canvasOffset.y}px) scale(${state.zoom})`;
+                updateCanvasTransform();
             }
             
-            // Handle temporary connection line during connection
+            // Handle connection preview
             if (state.isConnecting && state.connectingPoint) {
-                const tempLine = document.getElementById('temp-connection');
-                if (tempLine) {
-                    const rect = state.connectingPoint.getBoundingClientRect();
-                    const startX = rect.left + 8;
-                    const startY = rect.top + 8;
-                    
-                    tempLine.innerHTML = `
-                        <svg style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;">
-                            <line x1="${startX}" y1="${startY}" x2="${e.clientX}" y2="${e.clientY}" 
-                                  stroke="#60a5fa" stroke-width="2" stroke-dasharray="5,5" />
-                        </svg>
-                    `;
-                }
+                updateTempConnection(e.clientX, e.clientY);
             }
         }
 
-        // Handle canvas mouse up
         function handleCanvasMouseUp(e) {
-            // Handle connection completion
-            if (state.isConnecting && state.connectingFrom && e.target.classList.contains('connection-point')) {
-                const toPanelId = parseInt(e.target.dataset.panelId);
-                const fromPointIndex = parseInt(state.connectingPoint.dataset.index);
-                const toPointIndex = parseInt(e.target.dataset.index);
-                
-                if (state.connectingFrom !== toPanelId) {
-                    createConnection(state.connectingFrom, toPanelId, fromPointIndex, toPointIndex);
-                }
-            }
-            
-            // Clean up connection state
-            if (state.isConnecting) {
-                state.isConnecting = false;
-                if (state.connectingPoint) {
-                    state.connectingPoint.classList.remove('source');
+            // Finish connection
+            if (state.isConnecting && state.connectingFrom) {
+                const targetPoint = document.elementFromPoint(e.clientX, e.clientY);
+                if (targetPoint && targetPoint.classList.contains('connection-point')) {
+                    const toPanelId = parseInt(targetPoint.dataset.panelId);
+                    const fromPointIndex = parseInt(state.connectingPoint.dataset.pointIndex);
+                    const toPointIndex = parseInt(targetPoint.dataset.pointIndex);
+                    
+                    if (state.connectingFrom !== toPanelId) {
+                        createConnection(state.connectingFrom, toPanelId, fromPointIndex, toPointIndex);
+                    }
                 }
                 
-                const tempLine = document.getElementById('temp-connection');
-                if (tempLine) tempLine.remove();
-                
-                canvas.style.cursor = 'default';
+                cleanupConnection();
             }
             
-            // Clean up dragging state
-            if (state.draggedPanel) {
-                document.querySelectorAll('.panel').forEach(p => {
-                    p.classList.remove('dragging');
-                });
+            // Clean up dragging
+            if (state.isDragging) {
+                document.querySelectorAll('.panel').forEach(p => p.classList.remove('dragging'));
+                state.isDragging = false;
                 state.draggedPanel = null;
+                saveToHistory('move_panel');
             }
             
-            // Clean up panning state
+            // Clean up panning
             if (state.isPanning) {
                 state.isPanning = false;
-                canvas.style.cursor = 'grab';
+                updateCursor();
             }
         }
 
-        // Handle canvas wheel (zoom)
         function handleCanvasWheel(e) {
             e.preventDefault();
             const delta = e.deltaY > 0 ? -0.1 : 0.1;
-            zoomCanvas(delta);
+            zoomCanvas(delta, e.clientX, e.clientY);
         }
 
-        // Handle canvas context menu
         function handleCanvasContextMenu(e) {
-            if (e.target === canvas) {
-                e.preventDefault();
-                showContextMenu(e.clientX, e.clientY, 'canvas');
+            e.preventDefault();
+            if (state.selectedPanels.size > 0) {
+                showContextMenu(e.clientX, e.clientY);
             }
         }
 
-        // Handle keyboard shortcuts
-        function handleKeyDown(e) {
-            // Delete selected panel
-            if (e.key === 'Delete' && state.selectedPanel) {
-                deleteSelectedPanel();
-            }
+        function startConnection(e) {
+            if (state.currentTool !== 'connect') return;
             
-            // Save with Ctrl+S
-            if (e.ctrlKey && e.key === 's') {
-                e.preventDefault();
-                saveProject();
-            }
+            state.isConnecting = true;
+            state.connectingFrom = parseInt(e.target.dataset.panelId);
+            state.connectingPoint = e.target;
+            state.connectingPoint.classList.add('connecting');
             
-            // New panel with Ctrl+N
-            if (e.ctrlKey && e.key === 'n') {
-                e.preventDefault();
-                showPanelModal();
-            }
+            e.stopPropagation();
         }
 
-        // Zoom canvas
-        function zoomCanvas(delta) {
-            state.zoom = Math.max(0.1, Math.min(3, state.zoom + delta));
+        function startConnectionTouch(e) {
+            if (state.currentTool !== 'connect') return;
+            
+            const touch = e.touches[0];
+            const element = document.elementFromPoint(touch.clientX, touch.clientY);
+            
+            if (element && element.classList.contains('connection-point')) {
+                state.isConnecting = true;
+                state.connectingFrom = parseInt(element.dataset.panelId);
+                state.connectingPoint = element;
+                state.connectingPoint.classList.add('connecting');
+            }
+            
+            e.preventDefault();
+        }
+
+        function updateTempConnection(x, y) {
+            // Create or update temporary connection line
+            let tempLine = document.getElementById('temp-connection');
+            if (!tempLine) {
+                tempLine = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                tempLine.id = 'temp-connection';
+                tempLine.style.position = 'absolute';
+                tempLine.style.top = '0';
+                tempLine.style.left = '0';
+                tempLine.style.width = '100%';
+                tempLine.style.height = '100%';
+                tempLine.style.pointerEvents = 'none';
+                tempLine.style.zIndex = '100';
+                canvas.appendChild(tempLine);
+            }
+            
+            const rect = state.connectingPoint.getBoundingClientRect();
+            const startX = rect.left + 9;
+            const startY = rect.top + 9;
+            
+            tempLine.innerHTML = `
+                <line x1="${startX}" y1="${startY}" x2="${x}" y2="${y}" 
+                      stroke="#059669" stroke-width="3" stroke-dasharray="5,5" />
+            `;
+        }
+
+        function cleanupConnection() {
+            state.isConnecting = false;
+            state.connectingFrom = null;
+            if (state.connectingPoint) {
+                state.connectingPoint.classList.remove('connecting');
+                state.connectingPoint = null;
+            }
+            
+            const tempLine = document.getElementById('temp-connection');
+            if (tempLine) tempLine.remove();
+        }
+
+        function zoomCanvas(delta, centerX = window.innerWidth / 2, centerY = window.innerHeight / 2) {
+            const oldZoom = state.zoom;
+            state.zoom = Math.max(0.1, Math.min(5, state.zoom + delta));
+            
+            // Adjust offset to zoom around cursor
+            const scaleFactor = state.zoom / oldZoom;
+            state.canvasOffset.x = centerX - (centerX - state.canvasOffset.x) * scaleFactor;
+            state.canvasOffset.y = centerY - (centerY - state.canvasOffset.y) * scaleFactor;
+            
             updateCanvasTransform();
             updateZoomDisplay();
         }
 
-        // Reset zoom
-        function resetZoom() {
+        function resetView() {
             state.zoom = 1;
             state.canvasOffset = { x: 0, y: 0 };
             updateCanvasTransform();
             updateZoomDisplay();
         }
 
-        // Center view
         function centerView() {
-            state.canvasOffset = { x: 0, y: 0 };
+            // Center on content
+            if (state.panels.size === 0) return;
+            
+            let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+            state.panels.forEach(panel => {
+                minX = Math.min(minX, panel.x);
+                minY = Math.min(minY, panel.y);
+                maxX = Math.max(maxX, panel.x + panel.width);
+                maxY = Math.max(maxY, panel.y + panel.height);
+            });
+            
+            const centerX = (minX + maxX) / 2;
+            const centerY = (minY + maxY) / 2;
+            
+            state.canvasOffset.x = window.innerWidth / 2 - centerX;
+            state.canvasOffset.y = window.innerHeight / 2 - centerY;
+            
             updateCanvasTransform();
         }
 
-        // Update canvas transform
         function updateCanvasTransform() {
             canvas.style.transform = `translate(${state.canvasOffset.x}px, ${state.canvasOffset.y}px) scale(${state.zoom})`;
         }
 
-        // Update zoom display
         function updateZoomDisplay() {
             const zoomPercent = Math.round(state.zoom * 100);
             document.getElementById('zoomLevel').textContent = `${zoomPercent}%`;
             document.getElementById('zoomDisplay').textContent = `${zoomPercent}%`;
         }
 
-        // Update counts display
         function updateCounts() {
             document.getElementById('panelCount').textContent = state.panels.size;
             document.getElementById('connectionCount').textContent = state.connections.size;
         }
 
-        // Show panel modal
-        function showPanelModal() {
-            document.getElementById('panelName').value = '';
-            panelModal.classList.add('active');
+        function updateDocumentName() {
+            document.getElementById('currentDocument').textContent = state.currentFileName;
         }
 
-        // Handle panel form submit
-        function handlePanelFormSubmit(e) {
-            e.preventDefault();
-            
-            const name = document.getElementById('panelName').value;
-            const color = document.getElementById('panelColor').value;
-            
-            if (name) {
-                // Calculate position near center
-                const centerX = window.innerWidth / 2 - 140;
-                const centerY = window.innerHeight / 2 - 100;
-                
-                createPanel(name, centerX, centerY, color);
-                panelModal.classList.remove('active');
-                
-                showNotification('Panel berhasil dibuat', 'success');
+        function updateTime() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('currentTime').textContent = timeStr;
+        }
+
+        function updateCursor() {
+            switch (state.currentTool) {
+                case 'select': canvas.style.cursor = 'default'; break;
+                case 'pan': canvas.style.cursor = state.isPanning ? 'grabbing' : 'grab'; break;
+                case 'connect': canvas.style.cursor = 'crosshair'; break;
+                case 'rectangle': canvas.style.cursor = 'crosshair'; break;
+                case 'text': canvas.style.cursor = 'text'; break;
+                case 'delete': canvas.style.cursor = 'not-allowed'; break;
             }
         }
 
-        // Show auth modal
-        function showAuthModal() {
-            document.getElementById('authEmail').value = '';
-            document.getElementById('authPassword').value = '';
-            authModal.classList.add('active');
+        function updateGrid() {
+            canvas.style.backgroundSize = `${state.gridSize}px ${state.gridSize}px`;
         }
 
-        // Toggle auth mode (login/register)
-        function toggleAuthMode() {
-            const isLogin = document.getElementById('authTitle').textContent.includes('Login');
-            
-            if (isLogin) {
-                document.getElementById('authTitle').textContent = 'Daftar ke FlowConnect';
-                document.getElementById('submitAuthBtn').textContent = 'Daftar';
-                document.getElementById('authToggleText').textContent = 'Sudah punya akun?';
-                document.getElementById('authToggleLink').textContent = 'Login disini';
-            } else {
-                document.getElementById('authTitle').textContent = 'Login ke FlowConnect';
-                document.getElementById('submitAuthBtn').textContent = 'Login';
-                document.getElementById('authToggleText').textContent = 'Belum punya akun?';
-                document.getElementById('authToggleLink').textContent = 'Daftar disini';
+        function toggleGrid() {
+            const gridVisible = canvas.style.backgroundImage !== 'none';
+            canvas.style.backgroundImage = gridVisible ? 'none' : 
+                `linear-gradient(rgba(30, 41, 59, 0.1) 1px, transparent 1px),
+                 linear-gradient(90deg, rgba(30, 41, 59, 0.1) 1px, transparent 1px)`;
+        }
+
+        function clearCanvas() {
+            if (confirm('Clear all panels and connections? This cannot be undone.')) {
+                state.panels.clear();
+                state.connections.clear();
+                state.selectedPanels.clear();
+                canvas.innerHTML = '';
+                updateCounts();
+                saveToHistory('clear_canvas');
+                showNotification('Canvas cleared', 'success');
             }
         }
 
-        // Update saveProject function
-async function saveProject() {
-    if (!state.user) {
-        showNotification('Silakan login terlebih dahulu untuk menyimpan', 'error');
-        showAuthModal();
-        return;
-    }
-    
-    try {
-        const projectData = {
-            panels: Array.from(state.panels.values()),
-            connections: Array.from(state.connections.values()),
-            nextPanelId: state.nextPanelId,
-            nextConnectionId: state.nextConnectionId
-        };
-        
-        // Gunakan function save_project dengan parameter yang benar
-        const { data, error } = await supabase.rpc('save_project', {
-            p_user_id: state.user.id,
-            p_project_name: `Projek ${new Date().toLocaleDateString('id-ID')}`,
-            p_project_data: projectData
-            // Parameter lainnya menggunakan default values
-        });
-        
-        if (error) throw error;
-        
-        if (data && data.success) {
-            showNotification(`Projek berhasil ${data.action === 'updated' ? 'diperbarui' : 'disimpan'}!`, 'success');
-            console.log('Project saved:', data);
-        }
-    } catch (error) {
-        showNotification('Gagal menyimpan projek: ' + error.message, 'error');
-        console.error('Save error:', error);
-    }
-}
-
-// Update loadUserProjects function
-async function loadUserProjects() {
-    if (!state.user) return;
-    
-    try {
-        // Menggunakan function get_user_projects
-        const { data, error } = await supabase.rpc('get_user_projects');
-        
-        if (error) throw error;
-        
-        if (data && data.length > 0) {
-            console.log('Loaded projects:', data);
-            // Pilih project terbaru
-            const latestProject = data[0];
-            await loadProjectById(latestProject.id);
-        }
-    } catch (error) {
-        console.error('Error loading projects:', error);
-    }
-}
-
-// Function untuk load templates
-async function loadTemplates() {
-    try {
-        const { data, error } = await supabase
-            .from('templates')
-            .select('*')
-            .eq('is_public', true)
-            .order('created_at', { ascending: false })
-            .limit(5);
-        
-        if (error) throw error;
-        
-        if (data && data.length > 0) {
-            state.templates = data;
-            console.log('Templates loaded:', data);
-        }
-    } catch (error) {
-        console.error('Error loading templates:', error);
-    }
-}
-
-// Function untuk load project by ID
-async function loadProjectById(projectId) {
-    try {
-        const { data, error } = await supabase.rpc('get_project', {
-            p_project_id: projectId
-        });
-        
-        if (error) throw error;
-        
-        if (data && data.data) {
-            loadProjectData(data.data);
-            showNotification('Projek berhasil dimuat', 'success');
-        }
-    } catch (error) {
-        console.error('Error loading project:', error);
-        showNotification('Gagal memuat projek', 'error');
-    }
-}
-
-// Function untuk load project data ke canvas
-function loadProjectData(projectData) {
-    // Clear current state
-    state.panels.clear();
-    state.connections.clear();
-    canvas.innerHTML = '';
-    
-    // Load panels
-    projectData.panels.forEach(panelData => {
-        state.panels.set(panelData.id, panelData);
-        renderPanel(panelData);
-        createConnectionPoints(panelData);
-    });
-    
-    // Load connections
-    projectData.connections.forEach(connData => {
-        state.connections.set(connData.id, connData);
-        renderConnection(connData);
-    });
-    
-    // Update IDs
-    state.nextPanelId = projectData.nextPanelId || state.panels.size + 1;
-    state.nextConnectionId = projectData.nextConnectionId || state.connections.size + 1;
-    
-    updateCounts();
-}
-            
-            const email = document.getElementById('authEmail').value;
-            const password = document.getElementById('authPassword').value;
-            const isLogin = document.getElementById('submitAuthBtn').textContent === 'Login';
-            
-            try {
-                if (isLogin) {
-                    const { data, error } = await supabase.auth.signInWithPassword({
-                        email,
-                        password
-                    });
-                    
-                    if (error) throw error;
-                    
-                    state.user = data.user;
-                    showNotification('Login berhasil!', 'success');
-                    updateUserInfo();
-                    authModal.classList.remove('active');
-                    loadUserProjects();
-                } else {
-                    const { data, error } = await supabase.auth.signUp({
-                        email,
-                        password
-                    });
-                    
-                    if (error) throw error;
-                    
-                    showNotification('Pendaftaran berhasil! Silakan login.', 'success');
-                    toggleAuthMode(); // Switch back to login
-                }
-            } catch (error) {
-                showNotification(error.message, 'error');
-            }
-        }
-
-        // Check authentication status
-        async function checkAuthStatus() {
-            const { data } = await supabase.auth.getSession();
-            if (data.session) {
-                state.user = data.session.user;
-                updateUserInfo();
-                loadUserProjects();
-            }
-        }
-
-        // Update user info display
-        function updateUserInfo() {
-            if (state.user) {
-                document.getElementById('userInfo').style.display = 'flex';
-                document.getElementById('userName').textContent = state.user.email.split('@')[0];
-                document.getElementById('userEmail').textContent = state.user.email;
-                document.getElementById('userAvatar').textContent = state.user.email[0].toUpperCase();
-                document.getElementById('authBtn').innerHTML = '<i class="fas fa-sign-out-alt"></i> Logout';
-                document.getElementById('authBtn').onclick = logout;
-            } else {
-                document.getElementById('userInfo').style.display = 'none';
-                document.getElementById('authBtn').innerHTML = '<i class="fas fa-user"></i> Login';
-                document.getElementById('authBtn').onclick = showAuthModal;
-            }
-        }
-
-        // Logout
-        async function logout() {
-            await supabase.auth.signOut();
-            state.user = null;
-            state.currentProject = null;
-            updateUserInfo();
-            showNotification('Logout berhasil', 'success');
-        }
-
-        // Save project to Supabase
-        async function saveProject() {
-            if (!state.user) {
-                showNotification('Silakan login terlebih dahulu untuk menyimpan', 'error');
-                showAuthModal();
+        function createNewDiagram() {
+            if (state.panels.size > 0 && !confirm('Create new diagram? Unsaved changes will be lost.')) {
                 return;
             }
             
-            try {
-                const projectData = {
-                    name: `Projek ${new Date().toLocaleDateString()}`,
-                    data: {
-                        panels: Array.from(state.panels.values()),
-                        connections: Array.from(state.connections.values()),
-                        nextPanelId: state.nextPanelId,
-                        nextConnectionId: state.nextConnectionId
-                    },
-                    user_id: state.user.id,
-                    updated_at: new Date().toISOString()
-                };
-                
-                // Delete previous tables if they exist
-                const { error: deleteError } = await supabase
-                    .from('projects')
-                    .delete()
-                    .eq('user_id', state.user.id);
-                
-                if (deleteError) throw deleteError;
-                
-                // Insert new project
-                const { data, error } = await supabase
-                    .from('projects')
-                    .insert([projectData])
-                    .select();
-                
-                if (error) throw error;
-                
-                state.currentProject = data[0];
-                showNotification('Projek berhasil disimpan ke cloud!', 'success');
-            } catch (error) {
-                showNotification('Gagal menyimpan projek: ' + error.message, 'error');
-            }
+            state.panels.clear();
+            state.connections.clear();
+            state.selectedPanels.clear();
+            state.nextPanelId = 1;
+            state.nextConnectionId = 1;
+            canvas.innerHTML = '';
+            updateCounts();
+            state.currentFileName = `Diagram-${Date.now()}`;
+            updateDocumentName();
+            showNotification('New diagram created', 'success');
         }
 
-        // Load user projects
-        async function loadUserProjects() {
-            if (!state.user) return;
-            
-            try {
-                const { data, error } = await supabase
-                    .from('projects')
-                    .select('*')
-                    .eq('user_id', state.user.id)
-                    .order('updated_at', { ascending: false })
-                    .limit(1);
-                
-                if (error) throw error;
-                
-                if (data && data.length > 0) {
-                    state.currentProject = data[0];
-                    loadProjectData(state.currentProject.data);
-                    showNotification('Projek berhasil dimuat dari cloud', 'success');
+        // File Operations
+        function saveAsJSON() {
+            const data = {
+                version: '1.0',
+                name: state.currentFileName,
+                createdAt: new Date().toISOString(),
+                panels: Array.from(state.panels.values()),
+                connections: Array.from(state.connections.values()),
+                settings: {
+                    gridSize: state.gridSize,
+                    snapToGrid: state.snapToGrid
                 }
-            } catch (error) {
-                console.error('Error loading projects:', error);
-            }
+            };
+            
+            const jsonStr = JSON.stringify(data, null, 2);
+            const blob = new Blob([jsonStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            downloadAnchor.href = url;
+            downloadAnchor.download = `${state.currentFileName}.json`;
+            downloadAnchor.click();
+            
+            URL.revokeObjectURL(url);
+            fileModal.classList.remove('active');
+            showNotification('Diagram saved as JSON', 'success');
         }
 
-        // Load project data
-        function loadProjectData(projectData) {
-            // Clear current state
-            clearAll(false);
+        function handleJsonFileUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                try {
+                    const data = JSON.parse(event.target.result);
+                    loadFromJSON(data);
+                    fileModal.classList.remove('active');
+                    showNotification('Diagram loaded from JSON', 'success');
+                } catch (error) {
+                    showNotification('Invalid JSON file', 'error');
+                    console.error('JSON parse error:', error);
+                }
+            };
+            reader.readAsText(file);
+            
+            // Reset file input
+            e.target.value = '';
+        }
+
+        function loadFromJSON(data) {
+            if (!data.panels || !Array.isArray(data.panels)) {
+                showNotification('Invalid diagram format', 'error');
+                return;
+            }
+            
+            // Clear current
+            state.panels.clear();
+            state.connections.clear();
+            state.selectedPanels.clear();
+            canvas.innerHTML = '';
             
             // Load panels
-            projectData.panels.forEach(panelData => {
-                state.panels.set(panelData.id, panelData);
+            data.panels.forEach(panelData => {
+                const panelId = panelData.id;
+                state.panels.set(panelId, panelData);
+                renderPanel(panelData);
+                createConnectionPoints(panelData);
+                state.nextPanelId = Math.max(state.nextPanelId, panelId + 1);
+            });
+            
+            // Load connections
+            if (data.connections && Array.isArray(data.connections)) {
+                data.connections.forEach(connData => {
+                    const connId = connData.id;
+                    state.connections.set(connId, connData);
+                    renderConnection(connData);
+                    state.nextConnectionId = Math.max(state.nextConnectionId, connId + 1);
+                });
+            }
+            
+            // Update settings
+            if (data.settings) {
+                state.gridSize = data.settings.gridSize || 40;
+                state.snapToGrid = data.settings.snapToGrid !== false;
+                document.getElementById('gridSize').value = state.gridSize;
+                document.getElementById('snapToGrid').checked = state.snapToGrid;
+                updateGrid();
+            }
+            
+            updateCounts();
+            state.currentFileName = data.name || `Imported-${Date.now()}`;
+            updateDocumentName();
+            centerView();
+        }
+
+        function saveToLocalStorage() {
+            const data = {
+                version: '1.0',
+                name: state.currentFileName,
+                savedAt: new Date().toISOString(),
+                panels: Array.from(state.panels.values()),
+                connections: Array.from(state.connections.values())
+            };
+            
+            localStorage.setItem('flowconnect_diagram', JSON.stringify(data));
+            fileModal.classList.remove('active');
+            showNotification('Diagram saved to browser', 'success');
+        }
+
+        function loadFromLocalStorage() {
+            const saved = localStorage.getItem('flowconnect_diagram');
+            if (!saved) return;
+            
+            try {
+                const data = JSON.parse(saved);
+                loadFromJSON(data);
+                showNotification('Diagram loaded from browser', 'success');
+            } catch (error) {
+                console.error('Load from storage error:', error);
+            }
+        }
+
+        function autoSave() {
+            if (!state.autoSaveEnabled || state.panels.size === 0) return;
+            
+            const data = {
+                version: '1.0',
+                name: state.currentFileName,
+                savedAt: new Date().toISOString(),
+                panels: Array.from(state.panels.values()),
+                connections: Array.from(state.connections.values())
+            };
+            
+            localStorage.setItem('flowconnect_autosave', JSON.stringify(data));
+        }
+
+        function exportAsPNG() {
+            // This is a simplified version - in production use html2canvas library
+            showNotification('PNG export requires additional library', 'warning');
+            fileModal.classList.remove('active');
+        }
+
+        // Context Menu
+        function showContextMenu(x, y) {
+            contextMenu.style.left = `${x}px`;
+            contextMenu.style.top = `${y}px`;
+            contextMenu.classList.add('active');
+        }
+
+        function editSelectedPanel() {
+            if (state.selectedPanels.size === 1) {
+                const panelId = Array.from(state.selectedPanels)[0];
+                editPanel(panelId);
+            }
+            contextMenu.classList.remove('active');
+        }
+
+        function duplicateSelectedPanel() {
+            state.selectedPanels.forEach(panelId => {
+                const panel = state.panels.get(panelId);
+                if (panel) {
+                    createPanel(`${panel.name} (Copy)`, panel.x + 50, panel.y + 50, panel.color, panel.type);
+                }
+            });
+            contextMenu.classList.remove('active');
+        }
+
+        function changePanelColor() {
+            state.selectedPanels.forEach(panelId => {
+                const panel = state.panels.get(panelId);
+                if (panel) {
+                    panel.color = state.selectedColor;
+                    renderPanel(panel);
+                    updateConnectionPoints(panel);
+                }
+            });
+            contextMenu.classList.remove('active');
+        }
+
+        function changePanelZIndex(direction) {
+            state.selectedPanels.forEach(panelId => {
+                const panel = state.panels.get(panelId);
+                if (panel) {
+                    panel.zIndex += direction === 'forward' ? 10 : -10;
+                    renderPanel(panel);
+                }
+            });
+            contextMenu.classList.remove('active');
+        }
+
+        function deleteSelectedPanel() {
+            if (state.selectedPanels.size === 0) return;
+            
+            if (confirm(`Delete ${state.selectedPanels.size} selected panel(s)?`)) {
+                state.selectedPanels.forEach(panelId => {
+                    deletePanel(panelId);
+                });
+                state.selectedPanels.clear();
+            }
+            
+            if (panelModal.classList.contains('active')) {
+                panelModal.classList.remove('active');
+            }
+            contextMenu.classList.remove('active');
+        }
+
+        function deletePanel(panelId) {
+            const panel = state.panels.get(panelId);
+            if (!panel) return;
+            
+            // Remove connections involving this panel
+            for (const [id, conn] of state.connections.entries()) {
+                if (conn.fromPanelId === panelId || conn.toPanelId === panelId) {
+                    state.connections.delete(id);
+                    const connEl = document.getElementById(`connection-${id}`);
+                    if (connEl) connEl.remove();
+                }
+            }
+            
+            // Remove panel
+            state.panels.delete(panelId);
+            const panelEl = document.getElementById(`panel-${panelId}`);
+            if (panelEl) panelEl.remove();
+            
+            // Remove connection points
+            document.querySelectorAll(`[data-panel-id="${panelId}"]`).forEach(p => p.remove());
+            
+            updateCounts();
+            saveToHistory('delete_panel');
+        }
+
+        function savePanelChanges() {
+            const panelId = parseInt(panelModal.dataset.editingPanelId);
+            const panel = state.panels.get(panelId);
+            if (!panel) return;
+            
+            panel.name = document.getElementById('panelNameInput').value;
+            panel.type = document.getElementById('panelTypeSelect').value;
+            panel.width = parseInt(document.getElementById('panelWidth').value);
+            panel.height = parseInt(document.getElementById('panelHeight').value);
+            
+            const selectedColor = document.querySelector('#modalColorPicker .color-option.active');
+            if (selectedColor) {
+                panel.color = selectedColor.dataset.color;
+            }
+            
+            renderPanel(panel);
+            updateConnectionPoints(panel);
+            panelModal.classList.remove('active');
+            showNotification('Panel updated', 'success');
+            saveToHistory('edit_panel');
+        }
+
+        // History Management
+        function saveToHistory(action) {
+            // Limit history size
+            if (state.history.length > 50) {
+                state.history.shift();
+            }
+            
+            const snapshot = {
+                action: action,
+                timestamp: Date.now(),
+                data: {
+                    panels: Array.from(state.panels.entries()),
+                    connections: Array.from(state.connections.entries()),
+                    nextPanelId: state.nextPanelId,
+                    nextConnectionId: state.nextConnectionId
+                }
+            };
+            
+            state.history.push(snapshot);
+            state.historyIndex = state.history.length - 1;
+        }
+
+        function undo() {
+            if (state.historyIndex <= 0) return;
+            
+            state.historyIndex--;
+            const snapshot = state.history[state.historyIndex];
+            restoreSnapshot(snapshot.data);
+            showNotification('Undo: ' + snapshot.action, 'success');
+        }
+
+        function redo() {
+            if (state.historyIndex >= state.history.length - 1) return;
+            
+            state.historyIndex++;
+            const snapshot = state.history[state.historyIndex];
+            restoreSnapshot(snapshot.data);
+            showNotification('Redo: ' + snapshot.action, 'success');
+        }
+
+        function restoreSnapshot(snapshotData) {
+            // Clear current
+            state.panels.clear();
+            state.connections.clear();
+            canvas.innerHTML = '';
+            
+            // Restore panels
+            snapshotData.panels.forEach(([id, panelData]) => {
+                state.panels.set(id, panelData);
                 renderPanel(panelData);
                 createConnectionPoints(panelData);
             });
             
-            // Load connections
-            projectData.connections.forEach(connData => {
-                state.connections.set(connData.id, connData);
+            // Restore connections
+            snapshotData.connections.forEach(([id, connData]) => {
+                state.connections.set(id, connData);
                 renderConnection(connData);
             });
             
-            // Update IDs
-            state.nextPanelId = projectData.nextPanelId;
-            state.nextConnectionId = projectData.nextConnectionId;
-            
+            state.nextPanelId = snapshotData.nextPanelId;
+            state.nextConnectionId = snapshotData.nextConnectionId;
             updateCounts();
         }
 
-        // Clear all panels and connections
-        function clearAll(showConfirm = true) {
-            if (showConfirm && !confirm('Hapus semua panel dan koneksi?')) {
-                return;
+        // Touch support
+        function handleTouchStart(e) {
+            if (e.touches.length === 1) {
+                const touch = e.touches[0];
+                const element = document.elementFromPoint(touch.clientX, touch.clientY);
+                
+                if (element && element.classList.contains('panel-header')) {
+                    const panelId = parseInt(element.closest('.panel').id.split('-')[1]);
+                    startDraggingPanel({ clientX: touch.clientX, clientY: touch.clientY, preventDefault: () => {} }, panelId);
+                } else if (element && element.classList.contains('connection-point')) {
+                    startConnectionTouch(e);
+                } else {
+                    // Start panning
+                    state.isPanning = true;
+                    state.panStart.x = touch.clientX - state.canvasOffset.x;
+                    state.panStart.y = touch.clientY - state.canvasOffset.y;
+                    canvas.style.cursor = 'grabbing';
+                }
+            } else if (e.touches.length === 2) {
+                // Handle pinch zoom
+                e.preventDefault();
             }
-            
-            // Clear state
-            state.panels.clear();
-            state.connections.clear();
-            state.selectedPanel = null;
-            
-            // Clear DOM
-            canvas.innerHTML = '';
-            
-            // Reset IDs
-            state.nextPanelId = 1;
-            state.nextConnectionId = 1;
-            
-            updateCounts();
-            showNotification('Semua panel dan koneksi telah dihapus', 'success');
         }
 
-        // Show context menu
-        function showContextMenu(x, y, type) {
-            state.contextMenuTarget = type;
+        function handleTouchMove(e) {
+            if (e.touches.length === 1 && state.isDragging && state.draggedPanel) {
+                const touch = e.touches[0];
+                let newX = touch.clientX - state.dragOffset.x;
+                let newY = touch.clientY - state.dragOffset.y;
+                
+                if (state.snapToGrid) {
+                    newX = Math.round(newX / state.gridSize) * state.gridSize;
+                    newY = Math.round(newY / state.gridSize) * state.gridSize;
+                }
+                
+                state.draggedPanel.x = newX;
+                state.draggedPanel.y = newY;
+                
+                const panelEl = document.getElementById(`panel-${state.draggedPanel.id}`);
+                if (panelEl) {
+                    panelEl.style.left = `${newX}px`;
+                    panelEl.style.top = `${newY}px`;
+                }
+                
+                updateConnectionPoints(state.draggedPanel);
+            } else if (e.touches.length === 1 && state.isPanning) {
+                const touch = e.touches[0];
+                state.canvasOffset.x = touch.clientX - state.panStart.x;
+                state.canvasOffset.y = touch.clientY - state.panStart.y;
+                updateCanvasTransform();
+            }
+        }
+
+        function handleTouchEnd(e) {
+            state.isDragging = false;
+            state.draggedPanel = null;
+            state.isPanning = false;
+            updateCursor();
             
-            contextMenu.style.left = `${x}px`;
-            contextMenu.style.top = `${y}px`;
-            contextMenu.classList.add('active');
+            if (state.isConnecting) {
+                cleanupConnection();
+            }
+        }
+
+        // Keyboard shortcuts
+        function handleKeyDown(e) {
+            // Don't trigger shortcuts when typing in inputs
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
             
-            // Update context menu options based on type
-            if (type === 'canvas') {
-                document.getElementById('ctxChangeColor').style.display = 'none';
-                document.getElementById('ctxDuplicate').style.display = 'none';
-                document.getElementById('ctxDelete').style.display = 'none';
+            // Ctrl combinations
+            if (e.ctrlKey || e.metaKey) {
+                switch (e.key.toLowerCase()) {
+                    case 'z':
+                        if (e.shiftKey) redo();
+                        else undo();
+                        e.preventDefault();
+                        break;
+                    case 'y':
+                        redo();
+                        e.preventDefault();
+                        break;
+                    case 's':
+                        saveToLocalStorage();
+                        e.preventDefault();
+                        break;
+                    case 'o':
+                        fileModal.classList.add('active');
+                        e.preventDefault();
+                        break;
+                    case 'n':
+                        createNewDiagram();
+                        e.preventDefault();
+                        break;
+                    case '0':
+                        resetView();
+                        e.preventDefault();
+                        break;
+                    case '=':
+                    case '+':
+                        zoomCanvas(0.1);
+                        e.preventDefault();
+                        break;
+                    case '-':
+                        zoomCanvas(-0.1);
+                        e.preventDefault();
+                        break;
+                    case 'a':
+                        // Select all panels
+                        state.panels.forEach(panel => selectPanel(panel.id, true));
+                        e.preventDefault();
+                        break;
+                }
             } else {
-                document.getElementById('ctxChangeColor').style.display = 'flex';
-                document.getElementById('ctxDuplicate').style.display = 'flex';
-                document.getElementById('ctxDelete').style.display = 'flex';
-            }
-        }
-
-        // Change panel color
-        function changePanelColor() {
-            if (!state.selectedPanel) return;
-            
-            const panel = state.panels.get(state.selectedPanel);
-            if (!panel) return;
-            
-            // Cycle through colors
-            const colors = ['#3e8bff', '#00d4aa', '#ff6b81', '#9d4edd', '#ff9e00'];
-            const currentIndex = colors.indexOf(panel.color);
-            const nextIndex = (currentIndex + 1) % colors.length;
-            
-            panel.color = colors[nextIndex];
-            renderPanel(panel);
-            updateConnectionPoints(panel);
-            updateAllConnections();
-            
-            contextMenu.classList.remove('active');
-            showNotification('Warna panel diubah', 'success');
-        }
-
-        // Duplicate selected panel
-        function duplicatePanel() {
-            if (!state.selectedPanel) return;
-            
-            const original = state.panels.get(state.selectedPanel);
-            if (!original) return;
-            
-            const newPanel = createPanel(
-                `${original.name} (Salinan)`,
-                original.x + 50,
-                original.y + 50,
-                original.color
-            );
-            
-            contextMenu.classList.remove('active');
-            showNotification('Panel berhasil diduplikasi', 'success');
-        }
-
-        // Delete selected panel
-        function deleteSelectedPanel() {
-            if (!state.selectedPanel) return;
-            
-            const panel = state.panels.get(state.selectedPanel);
-            if (!panel) return;
-            
-            // Remove panel from state
-            state.panels.delete(state.selectedPanel);
-            
-            // Remove all connections involving this panel
-            for (const [id, conn] of state.connections.entries()) {
-                if (conn.fromPanelId === state.selectedPanel || conn.toPanelId === state.selectedPanel) {
-                    state.connections.delete(id);
+                // Single key shortcuts
+                switch (e.key.toLowerCase()) {
+                    case 'delete':
+                    case 'backspace':
+                        deleteSelectedPanel();
+                        e.preventDefault();
+                        break;
+                    case 'v':
+                        document.querySelector('[data-tool="select"]').click();
+                        break;
+                    case 'h':
+                        document.querySelector('[data-tool="pan"]').click();
+                        break;
+                    case 'c':
+                        document.querySelector('[data-tool="connect"]').click();
+                        break;
+                    case 'escape':
+                        state.selectedPanels.forEach(id => {
+                            const el = document.getElementById(`panel-${id}`);
+                            if (el) el.classList.remove('selected');
+                        });
+                        state.selectedPanels.clear();
+                        break;
                 }
             }
-            
-            // Remove DOM elements
-            const panelEl = document.getElementById(`panel-${state.selectedPanel}`);
-            if (panelEl) panelEl.remove();
-            
-            // Remove connection points
-            panel.connectionPoints.forEach(pointId => {
-                const point = document.getElementById(`point-${pointId}`);
-                if (point) point.remove();
-            });
-            
-            // Remove connections
-            document.querySelectorAll('.connection').forEach(conn => conn.remove());
-            
-            // Re-render remaining connections
-            updateAllConnections();
-            
-            // Update state
-            state.selectedPanel = null;
-            updateCounts();
-            
-            contextMenu.classList.remove('active');
-            showNotification('Panel berhasil dihapus', 'success');
         }
 
-        // Toggle instructions panel
-        function toggleInstructions() {
-            instructions.classList.toggle('collapsed');
-            const icon = document.getElementById('toggleInstructions').querySelector('i');
-            if (instructions.classList.contains('collapsed')) {
-                icon.className = 'fas fa-chevron-right';
-            } else {
-                icon.className = 'fas fa-chevron-left';
-            }
-        }
-
-        // Show notification
+        // Notification system
         function showNotification(message, type = 'success') {
-            notification.className = `notification ${type}`;
+            notification.className = `notification ${type} show`;
             notification.querySelector('.notification-icon i').className = 
-                type === 'success' ? 'fas fa-check' : 'fas fa-exclamation-circle';
-            document.getElementById('notificationMessage').textContent = message;
-            document.getElementById('notificationTitle').textContent = 
-                type === 'success' ? 'Berhasil!' : 'Error';
+                type === 'success' ? 'fas fa-check' :
+                type === 'error' ? 'fas fa-exclamation-circle' :
+                type === 'warning' ? 'fas fa-exclamation-triangle' : 'fas fa-info-circle';
             
-            notification.classList.add('show');
+            document.getElementById('notificationTitle').textContent = 
+                type.charAt(0).toUpperCase() + type.slice(1);
+            document.getElementById('notificationMessage').textContent = message;
             
             setTimeout(() => {
                 notification.classList.remove('show');
             }, 3000);
         }
 
-        // Initialize Supabase table (run once)
-        async function initializeSupabaseTable() {
-            // This is a one-time setup function
-            // The table should be created in Supabase dashboard first
-            console.log('Supabase initialized with URL:', SUPABASE_URL);
-        }
+        // Initialize grid
+        updateGrid();
     </script>
 </body>
 </html>
