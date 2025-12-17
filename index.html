@@ -1,0 +1,1907 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlowConnect | Visualisasi Panel & Koneksi</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+
+        :root {
+            --primary-color: #3e8bff;
+            --secondary-color: #00d4aa;
+            --danger-color: #ff4757;
+            --warning-color: #ffa502;
+            --dark-bg: #0f172a;
+            --panel-bg: #1e293b;
+            --panel-border: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --canvas-bg: #0a0f1c;
+            --node-color-1: #3e8bff;
+            --node-color-2: #00d4aa;
+            --node-color-3: #ff6b81;
+            --node-color-4: #9d4edd;
+            --node-color-5: #ff9e00;
+            --connection-color: #60a5fa;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 0 24px;
+            border-bottom: 1px solid var(--panel-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 64px;
+            z-index: 100;
+            position: relative;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-icon i {
+            color: white;
+            font-size: 16px;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .nav-center {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .nav-info {
+            display: flex;
+            gap: 16px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .nav-info-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background-color: rgba(30, 41, 59, 0.5);
+            border-radius: 6px;
+        }
+
+        .nav-info-item i {
+            font-size: 12px;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2d7aff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(62, 139, 255, 0.3);
+        }
+
+        .btn-secondary {
+            background-color: rgba(30, 41, 59, 0.8);
+            color: var(--text-primary);
+            border: 1px solid var(--panel-border);
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(51, 65, 85, 0.8);
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #ff3742;
+            transform: translateY(-2px);
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #canvas {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            cursor: grab;
+            background-color: var(--canvas-bg);
+            transform-origin: 0 0;
+        }
+
+        /* Panel Styles */
+        .panel {
+            position: absolute;
+            background-color: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 12px;
+            min-width: 280px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            cursor: move;
+            user-select: none;
+            transition: box-shadow 0.2s, transform 0.2s;
+            resize: both;
+            overflow: hidden;
+            min-height: 180px;
+        }
+
+        .panel:hover {
+            box-shadow: 0 12px 48px rgba(62, 139, 255, 0.15);
+            border-color: var(--primary-color);
+        }
+
+        .panel.dragging {
+            opacity: 0.9;
+            transform: scale(1.02);
+            z-index: 1000 !important;
+        }
+
+        .panel.selected {
+            box-shadow: 0 0 0 2px var(--primary-color), 0 12px 48px rgba(62, 139, 255, 0.2);
+            border-color: var(--primary-color);
+        }
+
+        .panel-header {
+            background-color: rgba(30, 41, 59, 0.9);
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--panel-border);
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: grab;
+        }
+
+        .panel-title {
+            font-weight: 600;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-primary);
+        }
+
+        .panel-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .panel-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .panel-action-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 14px;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .panel-action-btn:hover {
+            color: var(--text-primary);
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .panel-content {
+            padding: 20px;
+            height: calc(100% - 60px);
+            overflow-y: auto;
+        }
+
+        .panel-field {
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(51, 65, 85, 0.5);
+        }
+
+        .panel-field:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .field-name {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .field-value {
+            font-size: 14px;
+            color: var(--text-primary);
+            font-family: 'Monaco', 'Courier New', monospace;
+        }
+
+        /* Connection Points */
+        .connection-point {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background-color: var(--connection-color);
+            border: 2px solid var(--panel-bg);
+            cursor: crosshair;
+            z-index: 10;
+            transition: all 0.2s;
+        }
+
+        .connection-point:hover {
+            transform: scale(1.3);
+            box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.3);
+        }
+
+        .connection-point.source {
+            background-color: var(--secondary-color);
+        }
+
+        .connection-point.connected {
+            background-color: var(--warning-color);
+        }
+
+        /* Connection Lines */
+        .connection {
+            position: absolute;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .connection-line {
+            stroke: var(--connection-color);
+            stroke-width: 2;
+            fill: none;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+
+        .connection-line.source {
+            stroke: var(--secondary-color);
+        }
+
+        .connection-line.connected {
+            stroke: var(--warning-color);
+        }
+
+        /* Controls */
+        .controls {
+            position: absolute;
+            bottom: 24px;
+            right: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 50;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            background-color: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--panel-border);
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .control-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            background-color: rgba(30, 41, 59, 0.8);
+            border: 1px solid var(--panel-border);
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .control-btn:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .zoom-display {
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 8px;
+        }
+
+        /* Auth Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: var(--panel-bg);
+            padding: 32px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 440px;
+            border: 1px solid var(--panel-border);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .modal-header h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .modal-header p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            background-color: rgba(15, 23, 42, 0.8);
+            border: 1px solid var(--panel-border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .form-toggle {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--panel-border);
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .form-toggle a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .form-toggle a:hover {
+            text-decoration: underline;
+        }
+
+        /* Instructions */
+        .instructions {
+            position: absolute;
+            top: 80px;
+            left: 24px;
+            background-color: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--panel-border);
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 300px;
+            z-index: 50;
+            transition: transform 0.3s ease;
+        }
+
+        .instructions.collapsed {
+            transform: translateX(-320px);
+        }
+
+        .instructions-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .instructions-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .toggle-instructions {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+        }
+
+        .toggle-instructions:hover {
+            color: var(--text-primary);
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .instructions-list {
+            font-size: 13px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+
+        .instructions-list li {
+            margin-bottom: 10px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .instructions-list li:before {
+            content: "•";
+            color: var(--primary-color);
+            position: absolute;
+            left: 0;
+        }
+
+        .instructions-list kbd {
+            background-color: rgba(30, 41, 59, 0.8);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            border: 1px solid var(--panel-border);
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 23, 42, 0.95);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            gap: 20px;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(62, 139, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Context Menu */
+        .context-menu {
+            position: fixed;
+            background-color: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 8px;
+            padding: 8px;
+            z-index: 1000;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            min-width: 180px;
+            display: none;
+        }
+
+        .context-menu.active {
+            display: block;
+        }
+
+        .context-menu-item {
+            padding: 10px 16px;
+            color: var(--text-primary);
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background-color 0.2s;
+        }
+
+        .context-menu-item:hover {
+            background-color: rgba(62, 139, 255, 0.1);
+        }
+
+        .context-menu-item i {
+            width: 16px;
+            text-align: center;
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 80px;
+            right: 24px;
+            padding: 16px 20px;
+            background-color: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateX(120%);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .notification.success {
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .notification.success .notification-icon {
+            background-color: rgba(0, 212, 170, 0.2);
+            color: var(--secondary-color);
+        }
+
+        .notification.error {
+            border-left: 4px solid var(--danger-color);
+        }
+
+        .notification.error .notification-icon {
+            background-color: rgba(255, 71, 87, 0.2);
+            color: var(--danger-color);
+        }
+
+        /* User Info */
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .user-email {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Loading Overlay -->
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="spinner"></div>
+            <p>Memuat aplikasi...</p>
+        </div>
+
+        <!-- Header -->
+        <header>
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-project-diagram"></i>
+                </div>
+                <div class="logo-text">FlowConnect</div>
+            </div>
+
+            <div class="nav-center">
+                <div class="nav-info">
+                    <div class="nav-info-item">
+                        <i class="fas fa-square"></i>
+                        <span id="panelCount">0</span> Panel
+                    </div>
+                    <div class="nav-info-item">
+                        <i class="fas fa-link"></i>
+                        <span id="connectionCount">0</span> Koneksi
+                    </div>
+                    <div class="nav-info-item">
+                        <i class="fas fa-search"></i>
+                        <span id="zoomLevel">100%</span> Zoom
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-actions">
+                <div class="user-info" id="userInfo" style="display: none;">
+                    <div class="user-avatar" id="userAvatar">U</div>
+                    <div class="user-details">
+                        <div class="user-name" id="userName">User</div>
+                        <div class="user-email" id="userEmail">user@example.com</div>
+                    </div>
+                </div>
+                <button class="btn btn-secondary" id="saveBtn">
+                    <i class="fas fa-save"></i> Simpan
+                </button>
+                <button class="btn btn-primary" id="addPanelBtn">
+                    <i class="fas fa-plus"></i> Panel Baru
+                </button>
+                <button class="btn btn-secondary" id="authBtn">
+                    <i class="fas fa-user"></i> Login
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main>
+            <div id="canvas"></div>
+
+            <!-- Instructions Panel -->
+            <div class="instructions" id="instructions">
+                <div class="instructions-header">
+                    <h3>Petunjuk Penggunaan</h3>
+                    <button class="toggle-instructions" id="toggleInstructions">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                </div>
+                <ul class="instructions-list">
+                    <li><strong>Tambah Panel:</strong> Klik "Panel Baru" atau klik kanan pada canvas</li>
+                    <li><strong>Hubungkan Panel:</strong> Tarik titik bulat pada panel ke panel lain</li>
+                    <li><strong>Pindahkan Panel:</strong> Drag header panel</li>
+                    <li><strong>Ubah Ukuran:</strong> Drag sudut kanan bawah panel</li>
+                    <li><strong>Zoom:</strong> Gunakan scroll mouse atau tombol +/-</li>
+                    <li><strong>Pan Canvas:</strong> Drag canvas dengan mouse kanan</li>
+                    <li><strong>Hapus:</strong> Klik panel lalu tekan <kbd>Delete</kbd></li>
+                    <li><strong>Pilih Warna:</strong> Klik kanan panel → "Ubah Warna"</li>
+                    <li><strong>Simpan:</strong> Klik "Simpan" untuk menyimpan ke cloud</li>
+                </ul>
+            </div>
+
+            <!-- Controls -->
+            <div class="controls">
+                <div class="control-group">
+                    <button class="control-btn" id="zoomInBtn" title="Zoom In">
+                        <i class="fas fa-search-plus"></i>
+                    </button>
+                    <button class="control-btn" id="zoomOutBtn" title="Zoom Out">
+                        <i class="fas fa-search-minus"></i>
+                    </button>
+                    <button class="control-btn" id="resetZoomBtn" title="Reset Zoom">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <div class="zoom-display" id="zoomDisplay">100%</div>
+                </div>
+                <div class="control-group">
+                    <button class="control-btn" id="centerViewBtn" title="Pusatkan Tampilan">
+                        <i class="fas fa-crosshairs"></i>
+                    </button>
+                    <button class="control-btn" id="clearAllBtn" title="Hapus Semua">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Auth Modal -->
+    <div class="modal" id="authModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="authTitle">Login ke FlowConnect</h2>
+                <p>Simpan dan akses visualisasi Anda dari mana saja</p>
+            </div>
+            <form id="authForm">
+                <div class="form-group">
+                    <label for="authEmail">Email</label>
+                    <input type="email" id="authEmail" placeholder="nama@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="authPassword">Password</label>
+                    <input type="password" id="authPassword" placeholder="••••••••" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelAuthBtn" style="flex: 1;">Batal</button>
+                    <button type="submit" class="btn btn-primary" id="submitAuthBtn" style="flex: 1;">Login</button>
+                </div>
+            </form>
+            <div class="form-toggle">
+                <span id="authToggleText">Belum punya akun?</span>
+                <a id="authToggleLink">Daftar disini</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Panel Modal -->
+    <div class="modal" id="panelModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Buat Panel Baru</h2>
+                <p>Tambahkan panel baru ke visualisasi Anda</p>
+            </div>
+            <form id="panelForm">
+                <div class="form-group">
+                    <label for="panelName">Nama Panel</label>
+                    <input type="text" id="panelName" placeholder="Contoh: Proses Utama" required>
+                </div>
+                <div class="form-group">
+                    <label for="panelColor">Warna Panel</label>
+                    <select id="panelColor">
+                        <option value="#3e8bff">Biru</option>
+                        <option value="#00d4aa">Hijau</option>
+                        <option value="#ff6b81">Merah Muda</option>
+                        <option value="#9d4edd">Ungu</option>
+                        <option value="#ff9e00">Oranye</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelPanelBtn">Batal</button>
+                    <button type="submit" class="btn btn-primary">Buat Panel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Context Menu -->
+    <div class="context-menu" id="contextMenu">
+        <div class="context-menu-item" id="ctxAddPanel">
+            <i class="fas fa-plus"></i> Tambah Panel
+        </div>
+        <div class="context-menu-item" id="ctxChangeColor">
+            <i class="fas fa-palette"></i> Ubah Warna
+        </div>
+        <div class="context-menu-item" id="ctxDuplicate">
+            <i class="fas fa-copy"></i> Duplikat
+        </div>
+        <div class="context-menu-item" id="ctxDelete">
+            <i class="fas fa-trash"></i> Hapus
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <div class="notification-icon">
+            <i class="fas fa-check"></i>
+        </div>
+        <div class="notification-content">
+            <div class="notification-title" id="notificationTitle">Berhasil!</div>
+            <div class="notification-message" id="notificationMessage">Operasi berhasil dilakukan.</div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Supabase Configuration
+        const SUPABASE_URL = 'https://mqonelsoqyvrasrzrzfl.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1xb25lbHNvcXl2cmFzcnpyemZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDkxMjE5MzMsImV4cCI6MjAyNDY5NzkzM30.Kw6z26LJsc5bYxayMjBZZqR9x1t9qkijioJk6iZBe-s';
+        
+        // Initialize Supabase
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Application State
+        const state = {
+            panels: new Map(),
+            connections: new Map(),
+            nextPanelId: 1,
+            nextConnectionId: 1,
+            isConnecting: false,
+            connectingFrom: null,
+            connectingPoint: null,
+            selectedPanel: null,
+            draggedPanel: null,
+            dragOffset: { x: 0, y: 0 },
+            zoom: 1,
+            canvasOffset: { x: 0, y: 0 },
+            isPanning: false,
+            panStart: { x: 0, y: 0 },
+            user: null,
+            currentProject: null,
+            contextMenuTarget: null
+        };
+
+        // DOM Elements
+        const canvas = document.getElementById('canvas');
+        const panelModal = document.getElementById('panelModal');
+        const authModal = document.getElementById('authModal');
+        const contextMenu = document.getElementById('contextMenu');
+        const notification = document.getElementById('notification');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const instructions = document.getElementById('instructions');
+
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', async () => {
+            initializeEventListeners();
+            checkAuthStatus();
+            setupDefaultPanels();
+            
+            // Hide loading after a short delay
+            setTimeout(() => {
+                loadingOverlay.style.display = 'none';
+            }, 1000);
+        });
+
+        // Initialize event listeners
+        function initializeEventListeners() {
+            // Button event listeners
+            document.getElementById('addPanelBtn').addEventListener('click', showPanelModal);
+            document.getElementById('saveBtn').addEventListener('click', saveProject);
+            document.getElementById('authBtn').addEventListener('click', showAuthModal);
+            document.getElementById('clearAllBtn').addEventListener('click', clearAll);
+            document.getElementById('centerViewBtn').addEventListener('click', centerView);
+            
+            // Zoom controls
+            document.getElementById('zoomInBtn').addEventListener('click', () => zoomCanvas(0.1));
+            document.getElementById('zoomOutBtn').addEventListener('click', () => zoomCanvas(-0.1));
+            document.getElementById('resetZoomBtn').addEventListener('click', resetZoom);
+            
+            // Canvas interactions
+            canvas.addEventListener('mousedown', handleCanvasMouseDown);
+            canvas.addEventListener('mousemove', handleCanvasMouseMove);
+            canvas.addEventListener('mouseup', handleCanvasMouseUp);
+            canvas.addEventListener('wheel', handleCanvasWheel);
+            canvas.addEventListener('contextmenu', handleCanvasContextMenu);
+            
+            // Modal controls
+            document.getElementById('cancelPanelBtn').addEventListener('click', () => panelModal.classList.remove('active'));
+            document.getElementById('cancelAuthBtn').addEventListener('click', () => authModal.classList.remove('active'));
+            
+            // Form submissions
+            document.getElementById('panelForm').addEventListener('submit', handlePanelFormSubmit);
+            document.getElementById('authForm').addEventListener('submit', handleAuthFormSubmit);
+            
+            // Context menu
+            document.getElementById('ctxAddPanel').addEventListener('click', showPanelModal);
+            document.getElementById('ctxChangeColor').addEventListener('click', changePanelColor);
+            document.getElementById('ctxDuplicate').addEventListener('click', duplicatePanel);
+            document.getElementById('ctxDelete').addEventListener('click', deleteSelectedPanel);
+            
+            // Instructions toggle
+            document.getElementById('toggleInstructions').addEventListener('click', toggleInstructions);
+            
+            // Auth toggle
+            document.getElementById('authToggleLink').addEventListener('click', toggleAuthMode);
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', handleKeyDown);
+            
+            // Close context menu on click elsewhere
+            document.addEventListener('click', () => {
+                contextMenu.classList.remove('active');
+            });
+        }
+
+        // Setup default panels for demonstration
+        function setupDefaultPanels() {
+            const now = new Date();
+            const dateStr = now.toISOString().split('T')[0];
+            const timeStr = now.toTimeString().split(' ')[0].substring(0, 5);
+            
+            // Create some default panels
+            createPanel('Input Data', 200, 200, '#3e8bff');
+            createPanel('Proses Utama', 500, 200, '#00d4aa');
+            createPanel('Output', 800, 200, '#ff6b81');
+            createPanel('Validasi', 350, 400, '#9d4edd');
+            createPanel('Logging', 650, 400, '#ff9e00');
+            
+            // Update counts
+            updateCounts();
+        }
+
+        // Create a new panel
+        function createPanel(name, x, y, color = '#3e8bff') {
+            const panelId = state.nextPanelId++;
+            const now = new Date();
+            const dateStr = now.toISOString().split('T')[0];
+            const timeStr = now.toTimeString().split(' ')[0].substring(0, 5);
+            
+            const panel = {
+                id: panelId,
+                name: name,
+                x: x,
+                y: y,
+                width: 280,
+                height: 200,
+                color: color,
+                fields: [
+                    { name: 'ID', value: panelId.toString() },
+                    { name: 'Dibuat', value: dateStr },
+                    { name: 'Waktu', value: timeStr },
+                    { name: 'Status', value: 'Aktif' }
+                ],
+                connectionPoints: []
+            };
+            
+            state.panels.set(panelId, panel);
+            renderPanel(panel);
+            
+            // Create connection points
+            createConnectionPoints(panel);
+            
+            return panel;
+        }
+
+        // Render a panel
+        function renderPanel(panel) {
+            // Remove existing panel if any
+            const existing = document.getElementById(`panel-${panel.id}`);
+            if (existing) existing.remove();
+            
+            // Create panel element
+            const panelEl = document.createElement('div');
+            panelEl.className = 'panel';
+            panelEl.id = `panel-${panel.id}`;
+            panelEl.style.left = `${panel.x}px`;
+            panelEl.style.top = `${panel.y}px`;
+            panelEl.style.width = `${panel.width}px`;
+            panelEl.style.height = `${panel.height}px`;
+            panelEl.style.borderColor = panel.color;
+            
+            // Panel header
+            const header = document.createElement('div');
+            header.className = 'panel-header';
+            header.style.borderBottomColor = panel.color + '40';
+            
+            const title = document.createElement('div');
+            title.className = 'panel-title';
+            title.innerHTML = `
+                <span class="panel-color" style="background-color: ${panel.color}"></span>
+                ${panel.name}
+            `;
+            
+            const actions = document.createElement('div');
+            actions.className = 'panel-actions';
+            
+            header.appendChild(title);
+            header.appendChild(actions);
+            
+            // Panel content
+            const content = document.createElement('div');
+            content.className = 'panel-content';
+            
+            panel.fields.forEach(field => {
+                const fieldEl = document.createElement('div');
+                fieldEl.className = 'panel-field';
+                fieldEl.innerHTML = `
+                    <div class="field-name">${field.name}</div>
+                    <div class="field-value">${field.value}</div>
+                `;
+                content.appendChild(fieldEl);
+            });
+            
+            panelEl.appendChild(header);
+            panelEl.appendChild(content);
+            
+            // Event listeners for panel
+            header.addEventListener('mousedown', startDraggingPanel);
+            panelEl.addEventListener('mousedown', (e) => {
+                if (e.target === panelEl || e.target === content) {
+                    selectPanel(panel.id);
+                }
+            });
+            
+            panelEl.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                selectPanel(panel.id);
+                showContextMenu(e.clientX, e.clientY, 'panel');
+            });
+            
+            // Add resize handle
+            panelEl.style.resize = 'both';
+            panelEl.addEventListener('mouseup', () => {
+                if (panelEl.style.width && panelEl.style.height) {
+                    panel.width = parseInt(panelEl.style.width);
+                    panel.height = parseInt(panelEl.style.height);
+                    updateConnectionPoints(panel);
+                }
+            });
+            
+            canvas.appendChild(panelEl);
+        }
+
+        // Create connection points for a panel
+        function createConnectionPoints(panel) {
+            // Remove existing connection points
+            panel.connectionPoints.forEach(pointId => {
+                const point = document.getElementById(`point-${pointId}`);
+                if (point) point.remove();
+            });
+            
+            panel.connectionPoints = [];
+            
+            // Create points at each corner
+            const corners = [
+                { x: 0, y: 0 }, // Top-left
+                { x: panel.width, y: 0 }, // Top-right
+                { x: 0, y: panel.height }, // Bottom-left
+                { x: panel.width, y: panel.height } // Bottom-right
+            ];
+            
+            corners.forEach((corner, index) => {
+                const pointId = state.nextConnectionId++;
+                panel.connectionPoints.push(pointId);
+                
+                const point = document.createElement('div');
+                point.className = 'connection-point';
+                point.id = `point-${pointId}`;
+                point.style.left = `${panel.x + corner.x - 8}px`;
+                point.style.top = `${panel.y + corner.y - 8}px`;
+                point.dataset.panelId = panel.id;
+                point.dataset.pointId = pointId;
+                point.dataset.index = index;
+                
+                point.addEventListener('mousedown', startConnecting);
+                
+                canvas.appendChild(point);
+            });
+        }
+
+        // Update connection points position
+        function updateConnectionPoints(panel) {
+            const corners = [
+                { x: 0, y: 0 },
+                { x: panel.width, y: 0 },
+                { x: 0, y: panel.height },
+                { x: panel.width, y: panel.height }
+            ];
+            
+            panel.connectionPoints.forEach((pointId, index) => {
+                const point = document.getElementById(`point-${pointId}`);
+                if (point) {
+                    point.style.left = `${panel.x + corners[index].x - 8}px`;
+                    point.style.top = `${panel.y + corners[index].y - 8}px`;
+                }
+            });
+            
+            // Update connections
+            updateAllConnections();
+        }
+
+        // Start connecting from a point
+        function startConnecting(e) {
+            e.stopPropagation();
+            state.isConnecting = true;
+            state.connectingFrom = parseInt(e.target.dataset.panelId);
+            state.connectingPoint = e.target;
+            
+            // Highlight the starting point
+            state.connectingPoint.classList.add('source');
+            
+            // Create temporary connection line
+            const tempLine = document.createElement('div');
+            tempLine.id = 'temp-connection';
+            tempLine.style.position = 'absolute';
+            tempLine.style.pointerEvents = 'none';
+            tempLine.style.zIndex = '100';
+            canvas.appendChild(tempLine);
+            
+            // Update cursor
+            canvas.style.cursor = 'crosshair';
+        }
+
+        // Create a connection between two panels
+        function createConnection(fromPanelId, toPanelId, fromPointIndex = 0, toPointIndex = 1) {
+            // Check if connection already exists
+            for (const conn of state.connections.values()) {
+                if ((conn.fromPanelId === fromPanelId && conn.toPanelId === toPanelId) ||
+                    (conn.fromPanelId === toPanelId && conn.toPanelId === fromPanelId)) {
+                    return; // Connection already exists
+                }
+            }
+            
+            const connectionId = state.nextConnectionId++;
+            const connection = {
+                id: connectionId,
+                fromPanelId: fromPanelId,
+                toPanelId: toPanelId,
+                fromPointIndex: fromPointIndex,
+                toPointIndex: toPointIndex
+            };
+            
+            state.connections.set(connectionId, connection);
+            renderConnection(connection);
+            updateCounts();
+            
+            showNotification('Koneksi berhasil dibuat', 'success');
+        }
+
+        // Render a connection
+        function renderConnection(connection) {
+            // Remove existing connection if any
+            const existing = document.getElementById(`connection-${connection.id}`);
+            if (existing) existing.remove();
+            
+            const fromPanel = state.panels.get(connection.fromPanelId);
+            const toPanel = state.panels.get(connection.toPanelId);
+            
+            if (!fromPanel || !toPanel) return;
+            
+            // Calculate connection points
+            const fromCorners = [
+                { x: fromPanel.x, y: fromPanel.y },
+                { x: fromPanel.x + fromPanel.width, y: fromPanel.y },
+                { x: fromPanel.x, y: fromPanel.y + fromPanel.height },
+                { x: fromPanel.x + fromPanel.width, y: fromPanel.y + fromPanel.height }
+            ];
+            
+            const toCorners = [
+                { x: toPanel.x, y: toPanel.y },
+                { x: toPanel.x + toPanel.width, y: toPanel.y },
+                { x: toPanel.x, y: toPanel.y + toPanel.height },
+                { x: toPanel.x + toPanel.width, y: toPanel.y + toPanel.height }
+            ];
+            
+            const fromPoint = fromCorners[connection.fromPointIndex];
+            const toPoint = toCorners[connection.toPointIndex];
+            
+            // Create SVG element
+            const svgNS = "http://www.w3.org/2000/svg";
+            const connectionEl = document.createElementNS(svgNS, "svg");
+            connectionEl.className = "connection";
+            connectionEl.id = `connection-${connection.id}`;
+            connectionEl.style.position = "absolute";
+            connectionEl.style.top = "0";
+            connectionEl.style.left = "0";
+            connectionEl.style.width = "100%";
+            connectionEl.style.height = "100%";
+            connectionEl.style.zIndex = "1";
+            connectionEl.style.pointerEvents = "none";
+            
+            // Create path
+            const path = document.createElementNS(svgNS, "path");
+            path.classList.add("connection-line");
+            path.setAttribute("stroke", fromPanel.color);
+            
+            // Calculate control points for curved line
+            const dx = toPoint.x - fromPoint.x;
+            const dy = toPoint.y - fromPoint.y;
+            
+            // Create a nice curved line
+            const pathData = `
+                M ${fromPoint.x} ${fromPoint.y}
+                C ${fromPoint.x + dx * 0.5} ${fromPoint.y},
+                  ${toPoint.x - dx * 0.5} ${toPoint.y},
+                  ${toPoint.x} ${toPoint.y}
+            `;
+            
+            path.setAttribute("d", pathData);
+            path.setAttribute("fill", "none");
+            path.setAttribute("stroke-width", "2");
+            
+            connectionEl.appendChild(path);
+            canvas.appendChild(connectionEl);
+        }
+
+        // Update all connections
+        function updateAllConnections() {
+            state.connections.forEach(connection => {
+                renderConnection(connection);
+            });
+        }
+
+        // Start dragging a panel
+        function startDraggingPanel(e) {
+            const panelId = parseInt(e.target.closest('.panel').id.split('-')[1]);
+            const panel = state.panels.get(panelId);
+            
+            if (!panel) return;
+            
+            state.draggedPanel = panel;
+            state.dragOffset.x = e.clientX - panel.x;
+            state.dragOffset.y = e.clientY - panel.y;
+            
+            // Add dragging class
+            e.target.closest('.panel').classList.add('dragging');
+            
+            e.preventDefault();
+        }
+
+        // Select a panel
+        function selectPanel(panelId) {
+            // Deselect all panels
+            document.querySelectorAll('.panel').forEach(p => {
+                p.classList.remove('selected');
+            });
+            
+            state.selectedPanel = panelId;
+            
+            // Select the clicked panel
+            const panelEl = document.getElementById(`panel-${panelId}`);
+            if (panelEl) {
+                panelEl.classList.add('selected');
+            }
+        }
+
+        // Handle canvas mouse down
+        function handleCanvasMouseDown(e) {
+            if (e.button === 2) { // Right click
+                state.isPanning = true;
+                state.panStart.x = e.clientX - state.canvasOffset.x;
+                state.panStart.y = e.clientY - state.canvasOffset.y;
+                canvas.style.cursor = 'grabbing';
+                e.preventDefault();
+            } else if (e.button === 0) { // Left click
+                // Deselect all panels if clicking on canvas
+                if (e.target === canvas) {
+                    document.querySelectorAll('.panel').forEach(p => {
+                        p.classList.remove('selected');
+                    });
+                    state.selectedPanel = null;
+                }
+            }
+        }
+
+        // Handle canvas mouse move
+        function handleCanvasMouseMove(e) {
+            // Handle panel dragging
+            if (state.draggedPanel) {
+                state.draggedPanel.x = e.clientX - state.dragOffset.x;
+                state.draggedPanel.y = e.clientY - state.dragOffset.y;
+                
+                const panelEl = document.getElementById(`panel-${state.draggedPanel.id}`);
+                if (panelEl) {
+                    panelEl.style.left = `${state.draggedPanel.x}px`;
+                    panelEl.style.top = `${state.draggedPanel.y}px`;
+                }
+                
+                // Update connection points
+                updateConnectionPoints(state.draggedPanel);
+            }
+            
+            // Handle canvas panning
+            if (state.isPanning) {
+                state.canvasOffset.x = e.clientX - state.panStart.x;
+                state.canvasOffset.y = e.clientY - state.panStart.y;
+                
+                canvas.style.transform = `translate(${state.canvasOffset.x}px, ${state.canvasOffset.y}px) scale(${state.zoom})`;
+            }
+            
+            // Handle temporary connection line during connection
+            if (state.isConnecting && state.connectingPoint) {
+                const tempLine = document.getElementById('temp-connection');
+                if (tempLine) {
+                    const rect = state.connectingPoint.getBoundingClientRect();
+                    const startX = rect.left + 8;
+                    const startY = rect.top + 8;
+                    
+                    tempLine.innerHTML = `
+                        <svg style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;">
+                            <line x1="${startX}" y1="${startY}" x2="${e.clientX}" y2="${e.clientY}" 
+                                  stroke="#60a5fa" stroke-width="2" stroke-dasharray="5,5" />
+                        </svg>
+                    `;
+                }
+            }
+        }
+
+        // Handle canvas mouse up
+        function handleCanvasMouseUp(e) {
+            // Handle connection completion
+            if (state.isConnecting && state.connectingFrom && e.target.classList.contains('connection-point')) {
+                const toPanelId = parseInt(e.target.dataset.panelId);
+                const fromPointIndex = parseInt(state.connectingPoint.dataset.index);
+                const toPointIndex = parseInt(e.target.dataset.index);
+                
+                if (state.connectingFrom !== toPanelId) {
+                    createConnection(state.connectingFrom, toPanelId, fromPointIndex, toPointIndex);
+                }
+            }
+            
+            // Clean up connection state
+            if (state.isConnecting) {
+                state.isConnecting = false;
+                if (state.connectingPoint) {
+                    state.connectingPoint.classList.remove('source');
+                }
+                
+                const tempLine = document.getElementById('temp-connection');
+                if (tempLine) tempLine.remove();
+                
+                canvas.style.cursor = 'default';
+            }
+            
+            // Clean up dragging state
+            if (state.draggedPanel) {
+                document.querySelectorAll('.panel').forEach(p => {
+                    p.classList.remove('dragging');
+                });
+                state.draggedPanel = null;
+            }
+            
+            // Clean up panning state
+            if (state.isPanning) {
+                state.isPanning = false;
+                canvas.style.cursor = 'grab';
+            }
+        }
+
+        // Handle canvas wheel (zoom)
+        function handleCanvasWheel(e) {
+            e.preventDefault();
+            const delta = e.deltaY > 0 ? -0.1 : 0.1;
+            zoomCanvas(delta);
+        }
+
+        // Handle canvas context menu
+        function handleCanvasContextMenu(e) {
+            if (e.target === canvas) {
+                e.preventDefault();
+                showContextMenu(e.clientX, e.clientY, 'canvas');
+            }
+        }
+
+        // Handle keyboard shortcuts
+        function handleKeyDown(e) {
+            // Delete selected panel
+            if (e.key === 'Delete' && state.selectedPanel) {
+                deleteSelectedPanel();
+            }
+            
+            // Save with Ctrl+S
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+                saveProject();
+            }
+            
+            // New panel with Ctrl+N
+            if (e.ctrlKey && e.key === 'n') {
+                e.preventDefault();
+                showPanelModal();
+            }
+        }
+
+        // Zoom canvas
+        function zoomCanvas(delta) {
+            state.zoom = Math.max(0.1, Math.min(3, state.zoom + delta));
+            updateCanvasTransform();
+            updateZoomDisplay();
+        }
+
+        // Reset zoom
+        function resetZoom() {
+            state.zoom = 1;
+            state.canvasOffset = { x: 0, y: 0 };
+            updateCanvasTransform();
+            updateZoomDisplay();
+        }
+
+        // Center view
+        function centerView() {
+            state.canvasOffset = { x: 0, y: 0 };
+            updateCanvasTransform();
+        }
+
+        // Update canvas transform
+        function updateCanvasTransform() {
+            canvas.style.transform = `translate(${state.canvasOffset.x}px, ${state.canvasOffset.y}px) scale(${state.zoom})`;
+        }
+
+        // Update zoom display
+        function updateZoomDisplay() {
+            const zoomPercent = Math.round(state.zoom * 100);
+            document.getElementById('zoomLevel').textContent = `${zoomPercent}%`;
+            document.getElementById('zoomDisplay').textContent = `${zoomPercent}%`;
+        }
+
+        // Update counts display
+        function updateCounts() {
+            document.getElementById('panelCount').textContent = state.panels.size;
+            document.getElementById('connectionCount').textContent = state.connections.size;
+        }
+
+        // Show panel modal
+        function showPanelModal() {
+            document.getElementById('panelName').value = '';
+            panelModal.classList.add('active');
+        }
+
+        // Handle panel form submit
+        function handlePanelFormSubmit(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('panelName').value;
+            const color = document.getElementById('panelColor').value;
+            
+            if (name) {
+                // Calculate position near center
+                const centerX = window.innerWidth / 2 - 140;
+                const centerY = window.innerHeight / 2 - 100;
+                
+                createPanel(name, centerX, centerY, color);
+                panelModal.classList.remove('active');
+                
+                showNotification('Panel berhasil dibuat', 'success');
+            }
+        }
+
+        // Show auth modal
+        function showAuthModal() {
+            document.getElementById('authEmail').value = '';
+            document.getElementById('authPassword').value = '';
+            authModal.classList.add('active');
+        }
+
+        // Toggle auth mode (login/register)
+        function toggleAuthMode() {
+            const isLogin = document.getElementById('authTitle').textContent.includes('Login');
+            
+            if (isLogin) {
+                document.getElementById('authTitle').textContent = 'Daftar ke FlowConnect';
+                document.getElementById('submitAuthBtn').textContent = 'Daftar';
+                document.getElementById('authToggleText').textContent = 'Sudah punya akun?';
+                document.getElementById('authToggleLink').textContent = 'Login disini';
+            } else {
+                document.getElementById('authTitle').textContent = 'Login ke FlowConnect';
+                document.getElementById('submitAuthBtn').textContent = 'Login';
+                document.getElementById('authToggleText').textContent = 'Belum punya akun?';
+                document.getElementById('authToggleLink').textContent = 'Daftar disini';
+            }
+        }
+
+        // Handle auth form submit
+        async function handleAuthFormSubmit(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('authEmail').value;
+            const password = document.getElementById('authPassword').value;
+            const isLogin = document.getElementById('submitAuthBtn').textContent === 'Login';
+            
+            try {
+                if (isLogin) {
+                    const { data, error } = await supabase.auth.signInWithPassword({
+                        email,
+                        password
+                    });
+                    
+                    if (error) throw error;
+                    
+                    state.user = data.user;
+                    showNotification('Login berhasil!', 'success');
+                    updateUserInfo();
+                    authModal.classList.remove('active');
+                    loadUserProjects();
+                } else {
+                    const { data, error } = await supabase.auth.signUp({
+                        email,
+                        password
+                    });
+                    
+                    if (error) throw error;
+                    
+                    showNotification('Pendaftaran berhasil! Silakan login.', 'success');
+                    toggleAuthMode(); // Switch back to login
+                }
+            } catch (error) {
+                showNotification(error.message, 'error');
+            }
+        }
+
+        // Check authentication status
+        async function checkAuthStatus() {
+            const { data } = await supabase.auth.getSession();
+            if (data.session) {
+                state.user = data.session.user;
+                updateUserInfo();
+                loadUserProjects();
+            }
+        }
+
+        // Update user info display
+        function updateUserInfo() {
+            if (state.user) {
+                document.getElementById('userInfo').style.display = 'flex';
+                document.getElementById('userName').textContent = state.user.email.split('@')[0];
+                document.getElementById('userEmail').textContent = state.user.email;
+                document.getElementById('userAvatar').textContent = state.user.email[0].toUpperCase();
+                document.getElementById('authBtn').innerHTML = '<i class="fas fa-sign-out-alt"></i> Logout';
+                document.getElementById('authBtn').onclick = logout;
+            } else {
+                document.getElementById('userInfo').style.display = 'none';
+                document.getElementById('authBtn').innerHTML = '<i class="fas fa-user"></i> Login';
+                document.getElementById('authBtn').onclick = showAuthModal;
+            }
+        }
+
+        // Logout
+        async function logout() {
+            await supabase.auth.signOut();
+            state.user = null;
+            state.currentProject = null;
+            updateUserInfo();
+            showNotification('Logout berhasil', 'success');
+        }
+
+        // Save project to Supabase
+        async function saveProject() {
+            if (!state.user) {
+                showNotification('Silakan login terlebih dahulu untuk menyimpan', 'error');
+                showAuthModal();
+                return;
+            }
+            
+            try {
+                const projectData = {
+                    name: `Projek ${new Date().toLocaleDateString()}`,
+                    data: {
+                        panels: Array.from(state.panels.values()),
+                        connections: Array.from(state.connections.values()),
+                        nextPanelId: state.nextPanelId,
+                        nextConnectionId: state.nextConnectionId
+                    },
+                    user_id: state.user.id,
+                    updated_at: new Date().toISOString()
+                };
+                
+                // Delete previous tables if they exist
+                const { error: deleteError } = await supabase
+                    .from('projects')
+                    .delete()
+                    .eq('user_id', state.user.id);
+                
+                if (deleteError) throw deleteError;
+                
+                // Insert new project
+                const { data, error } = await supabase
+                    .from('projects')
+                    .insert([projectData])
+                    .select();
+                
+                if (error) throw error;
+                
+                state.currentProject = data[0];
+                showNotification('Projek berhasil disimpan ke cloud!', 'success');
+            } catch (error) {
+                showNotification('Gagal menyimpan projek: ' + error.message, 'error');
+            }
+        }
+
+        // Load user projects
+        async function loadUserProjects() {
+            if (!state.user) return;
+            
+            try {
+                const { data, error } = await supabase
+                    .from('projects')
+                    .select('*')
+                    .eq('user_id', state.user.id)
+                    .order('updated_at', { ascending: false })
+                    .limit(1);
+                
+                if (error) throw error;
+                
+                if (data && data.length > 0) {
+                    state.currentProject = data[0];
+                    loadProjectData(state.currentProject.data);
+                    showNotification('Projek berhasil dimuat dari cloud', 'success');
+                }
+            } catch (error) {
+                console.error('Error loading projects:', error);
+            }
+        }
+
+        // Load project data
+        function loadProjectData(projectData) {
+            // Clear current state
+            clearAll(false);
+            
+            // Load panels
+            projectData.panels.forEach(panelData => {
+                state.panels.set(panelData.id, panelData);
+                renderPanel(panelData);
+                createConnectionPoints(panelData);
+            });
+            
+            // Load connections
+            projectData.connections.forEach(connData => {
+                state.connections.set(connData.id, connData);
+                renderConnection(connData);
+            });
+            
+            // Update IDs
+            state.nextPanelId = projectData.nextPanelId;
+            state.nextConnectionId = projectData.nextConnectionId;
+            
+            updateCounts();
+        }
+
+        // Clear all panels and connections
+        function clearAll(showConfirm = true) {
+            if (showConfirm && !confirm('Hapus semua panel dan koneksi?')) {
+                return;
+            }
+            
+            // Clear state
+            state.panels.clear();
+            state.connections.clear();
+            state.selectedPanel = null;
+            
+            // Clear DOM
+            canvas.innerHTML = '';
+            
+            // Reset IDs
+            state.nextPanelId = 1;
+            state.nextConnectionId = 1;
+            
+            updateCounts();
+            showNotification('Semua panel dan koneksi telah dihapus', 'success');
+        }
+
+        // Show context menu
+        function showContextMenu(x, y, type) {
+            state.contextMenuTarget = type;
+            
+            contextMenu.style.left = `${x}px`;
+            contextMenu.style.top = `${y}px`;
+            contextMenu.classList.add('active');
+            
+            // Update context menu options based on type
+            if (type === 'canvas') {
+                document.getElementById('ctxChangeColor').style.display = 'none';
+                document.getElementById('ctxDuplicate').style.display = 'none';
+                document.getElementById('ctxDelete').style.display = 'none';
+            } else {
+                document.getElementById('ctxChangeColor').style.display = 'flex';
+                document.getElementById('ctxDuplicate').style.display = 'flex';
+                document.getElementById('ctxDelete').style.display = 'flex';
+            }
+        }
+
+        // Change panel color
+        function changePanelColor() {
+            if (!state.selectedPanel) return;
+            
+            const panel = state.panels.get(state.selectedPanel);
+            if (!panel) return;
+            
+            // Cycle through colors
+            const colors = ['#3e8bff', '#00d4aa', '#ff6b81', '#9d4edd', '#ff9e00'];
+            const currentIndex = colors.indexOf(panel.color);
+            const nextIndex = (currentIndex + 1) % colors.length;
+            
+            panel.color = colors[nextIndex];
+            renderPanel(panel);
+            updateConnectionPoints(panel);
+            updateAllConnections();
+            
+            contextMenu.classList.remove('active');
+            showNotification('Warna panel diubah', 'success');
+        }
+
+        // Duplicate selected panel
+        function duplicatePanel() {
+            if (!state.selectedPanel) return;
+            
+            const original = state.panels.get(state.selectedPanel);
+            if (!original) return;
+            
+            const newPanel = createPanel(
+                `${original.name} (Salinan)`,
+                original.x + 50,
+                original.y + 50,
+                original.color
+            );
+            
+            contextMenu.classList.remove('active');
+            showNotification('Panel berhasil diduplikasi', 'success');
+        }
+
+        // Delete selected panel
+        function deleteSelectedPanel() {
+            if (!state.selectedPanel) return;
+            
+            const panel = state.panels.get(state.selectedPanel);
+            if (!panel) return;
+            
+            // Remove panel from state
+            state.panels.delete(state.selectedPanel);
+            
+            // Remove all connections involving this panel
+            for (const [id, conn] of state.connections.entries()) {
+                if (conn.fromPanelId === state.selectedPanel || conn.toPanelId === state.selectedPanel) {
+                    state.connections.delete(id);
+                }
+            }
+            
+            // Remove DOM elements
+            const panelEl = document.getElementById(`panel-${state.selectedPanel}`);
+            if (panelEl) panelEl.remove();
+            
+            // Remove connection points
+            panel.connectionPoints.forEach(pointId => {
+                const point = document.getElementById(`point-${pointId}`);
+                if (point) point.remove();
+            });
+            
+            // Remove connections
+            document.querySelectorAll('.connection').forEach(conn => conn.remove());
+            
+            // Re-render remaining connections
+            updateAllConnections();
+            
+            // Update state
+            state.selectedPanel = null;
+            updateCounts();
+            
+            contextMenu.classList.remove('active');
+            showNotification('Panel berhasil dihapus', 'success');
+        }
+
+        // Toggle instructions panel
+        function toggleInstructions() {
+            instructions.classList.toggle('collapsed');
+            const icon = document.getElementById('toggleInstructions').querySelector('i');
+            if (instructions.classList.contains('collapsed')) {
+                icon.className = 'fas fa-chevron-right';
+            } else {
+                icon.className = 'fas fa-chevron-left';
+            }
+        }
+
+        // Show notification
+        function showNotification(message, type = 'success') {
+            notification.className = `notification ${type}`;
+            notification.querySelector('.notification-icon i').className = 
+                type === 'success' ? 'fas fa-check' : 'fas fa-exclamation-circle';
+            document.getElementById('notificationMessage').textContent = message;
+            document.getElementById('notificationTitle').textContent = 
+                type === 'success' ? 'Berhasil!' : 'Error';
+            
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Initialize Supabase table (run once)
+        async function initializeSupabaseTable() {
+            // This is a one-time setup function
+            // The table should be created in Supabase dashboard first
+            console.log('Supabase initialized with URL:', SUPABASE_URL);
+        }
+    </script>
+</body>
+</html>
